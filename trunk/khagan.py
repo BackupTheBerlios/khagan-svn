@@ -123,13 +123,20 @@ class Khagan:
 	parent_node = doc.appendChild(doc.createElement("gui"))
 	for child in self.window.get_children():
 	    self.save_rec(doc, parent_node, child)
-	xml.dom.ext.PrettyPrint(doc)
+	dialog = gtk.FileChooserDialog('Save as', self.window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
+	if dialog.run() == gtk.RESPONSE_OK:
+	    outfile = file(dialog.get_filename(), 'w')
+	    xml.dom.ext.PrettyPrint(doc)
+	    xml.dom.ext.PrettyPrint(doc, outfile)
+	dialog.destroy()
 	return
 
     def save_rec(self, doc, parent_node, child):	
 	#if it's anything that has params just print it
 	if(type(child) == phat.HFanSlider) or (type(child) == phat.SliderButton):
 	    self.save_widget(child, doc, parent_node)
+	elif type(child) == phat.Pad:
+	    self.save_widget_pad(child, doc, parent_node)
 	elif(type(child) == gtk.Button):
 	    widget_node = doc.createElement('widget')
 	    parent_node.appendChild(widget_node)
@@ -150,31 +157,35 @@ class Khagan:
     def save_widget(self, child, doc, parent_node):
 	widget_node = doc.createElement('widget')
 	parent_node.appendChild(widget_node)
+	names = ['name', 'value', 'min', 'max', 'osc_path', 'port']
+	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0])]
 	
+	for i in range(len(names)):
+	    node = doc.createElement(names[i])
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(values[i]))
+	return
+    
+
+    def save_widget_pad(self, child, doc, parent_node):
+	widget_node = doc.createElement('widget')
+	parent_node.appendChild(widget_node)
+
 	node = doc.createElement('name')
 	widget_node.appendChild(node)
 	node.appendChild(doc.createTextNode(child.get_name()))
 
-	node = doc.createElement('value')
-	widget_node.appendChild(node)
-	node.appendChild(doc.createTextNode(str(child.get_value())))
+	for i in range(5):
+	    node = doc.createElement('osc_path'+str(i))
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(child.osc_path[i]))
 
-	node = doc.createElement('min')
-	widget_node.appendChild(node)
-	node.appendChild(doc.createTextNode(str(child.get_adjustment().lower)))
-	
-	node = doc.createElement('max')
-	widget_node.appendChild(node)
-	node.appendChild(doc.createTextNode(str(child.get_adjustment().upper)))
-
-	node = doc.createElement('osc_path')
-	widget_node.appendChild(node)
-	node.appendChild(doc.createTextNode(child.osc_path))
-
-	node = doc.createElement('port')
-	widget_node.appendChild(node)
-	node.appendChild(doc.createTextNode(str(child.port)))
+	for i in range(5):
+	    node = doc.createElement('port'+str(i))
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(child.port[i]))
 	return	
+
 
     def open_cb(self, b):
 	print 'Open'
@@ -223,9 +234,9 @@ class Khagan:
 	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous-1')
 	dialog = gladexml.get_widget('widget_continuous-1')
 	if hasattr(self.cur_widget, 'osc_path'):
-	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path)
+	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path[0])
 	if hasattr(self.cur_widget, 'port'):
-	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port))
+	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port[0]))
 	gladexml.get_widget('custom3').set_value(self.cur_widget.get_adjustment().lower)
 	gladexml.get_widget('custom2').set_value(self.cur_widget.get_adjustment().upper)
 	gladexml.get_widget('button1').connect("clicked", lambda w: dialog.destroy())
