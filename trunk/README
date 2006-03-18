@@ -1,0 +1,4 @@
+this is very alpha code. 
+the paths should look something like /om/synth/set_port_value 1 /909bass/Tune % 
+% is the sub token, i.e % is replaced by the value of the widget 
+for the pad currently all paths must be set. Double right click to get to edit on the pad... i'll fix it ;-)
