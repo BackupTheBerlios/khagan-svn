@@ -14,10 +14,10 @@ class Khagan:
     <ui>
     <menubar name="TopBar">
 	<menu action="File">
-	    <menuitem action="Quit"/>
-	    <menuitem action="Configure input"/>
 	    <menuitem action="Open"/>
 	    <menuitem action="Save"/>
+	    <menuitem action="Configure input"/>
+	    <menuitem action="Quit"/>
 	</menu>
     </menubar>
     <popup name="popup">
@@ -137,13 +137,14 @@ class Khagan:
 	dialog = gtk.FileChooserDialog('Save as', self.window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
 	if dialog.run() == gtk.RESPONSE_OK:
 	    outfile = file(dialog.get_filename(), 'w')
-	    xml.dom.ext.PrettyPrint(doc)
+	    #xml.dom.ext.PrettyPrint(doc)
 	    xml.dom.ext.PrettyPrint(doc, outfile)
 	dialog.destroy()
 	return
 
     def save_rec(self, doc, parent_node, child):	
 	#if it's anything that has params just print it
+	widget_node = None
 	if(type(child) == phat.HFanSlider) or (type(child) == phat.SliderButton):
 	    self.save_widget(child, doc, parent_node)
 	elif type(child) == phat.Pad:
@@ -156,12 +157,19 @@ class Khagan:
 	    node.appendChild(doc.createTextNode(child.get_name()))
 	#if it's here it's a container widget, so recurse
 	else:
-	    widget_node = doc.createElement(child.get_name())
-	    parent_node.appendChild(widget_node)
+	    if(type(child) == gtk.HBox):
+		widget_node = doc.createElement('vsplit')
+		parent_node.appendChild(widget_node)
+	    elif(type(child) == gtk.VBox):
+		widget_node = doc.createElement('hsplit')
+		parent_node.appendChild(widget_node)
 	    
 	    if issubclass(type(child), gtk.Container):
 		for child2 in child.get_children():
-		    self.save_rec(doc, widget_node, child2)	
+		    if(widget_node):
+			self.save_rec(doc, widget_node, child2)	
+		    else:
+			self.save_rec(doc, parent_node, child2)
 		
 	return
 
@@ -199,10 +207,15 @@ class Khagan:
 
 
     def open_cb(self, b):
-	print 'Open'
+	print 'Opening'
+	doc = xml.dom.minidom.Document()	
+	dialog = gtk.FileChooserDialog('Open', self.window, gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+	if dialog.run() == gtk.RESPONSE_OK:
+	    doc = xml.dom.minidom.parse(dialog.get_filename())
+	    #xml.dom.ext.PrettyPrint(doc)
+	    
+	dialog.destroy()
 	return
-        #print 'Quitting program'
-        #gtk.main_quit()
 
     def popup_cb(self, widget, event):
 	self.cur_widget = widget
@@ -261,9 +274,13 @@ class Khagan:
 	dialog = gladexml.get_widget('widget_pad_tablet')
 	#entries in list
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
+	ports = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
 	if hasattr(self.cur_widget, 'osc_path'):
 	    for i in range(len(entry)):
 	    		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
+	if hasattr(self.cur_widget, 'port'):
+	    for i in range(len(ports)):
+	    		gladexml.get_widget(entry[i]).set_text(str(self.cur_widget.port[i]))
 		
 	#gladexml.get_widget('custom3').set_value(self.cur_widget.get_adjustment().lower)
 	#gladexml.get_widget('custom2').set_value(self.cur_widget.get_adjustment().upper)
@@ -313,7 +330,7 @@ class Khagan:
 		widget.sub_index[num] = i
 	return
 
-    def osc_send_cb(self, widget):
+    def osc_send_cb(self,widget):
 	#osc.Message("/filter/cutoff", [145.1232]).sendlocal(port)
 	#sub in current widget value to sub location. Iterate over all paths for multid widgets
 	if hasattr(widget, 'split_path'):
@@ -323,6 +340,7 @@ class Khagan:
 		for i in range(len(widget.split_path)):
 		    widget.split_path[i][widget.sub_index[i]] = parms[i]
 		    osc.Message(widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)]).sendlocal(widget.port[i])
+		    #print 'osc.Message(', widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)], ').sendlocal(', widget.port[i],')'
 	    else:
 		osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path)]).sendlocal(widget.port[0])
 	    #print 'osc.Message(', widget.split_path[0], widget.split_path[1:len(widget.split_path)], ').sendlocal(', widget.port, ')'
