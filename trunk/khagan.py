@@ -15,6 +15,7 @@ class Khagan:
     <menubar name="TopBar">
 	<menu action="File">
 	    <menuitem action="Quit"/>
+	    <menuitem action="Configure input"/>
 	    <menuitem action="Open"/>
 	    <menuitem action="Save"/>
 	</menu>
@@ -64,6 +65,7 @@ class Khagan:
         topgroup.add_actions([('Quit', gtk.STOCK_QUIT, '_Quit me!', None, 'Quit the Program', self.quit_cb), 
 				('File', None, '_File'),
 				('Save', gtk.STOCK_SAVE, None, None, 'Save current setup', self.save_cb),
+				('Configure input', gtk.STOCK_PREFERENCES, 'Configure input', None, 'Save current setup', self.inputd_cb),
 				('Open', gtk.STOCK_OPEN, None, None, 'Open setup', self.open_cb)])
 								
 	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
@@ -116,6 +118,15 @@ class Khagan:
     def quit_cb(self, b):
         print 'Quitting program'
         gtk.main_quit()
+
+    def inputd_cb(self, b):
+	inputd = gtk.InputDialog()
+        inputd.connect("destroy", lambda w: inputd.destroy())
+	inputd.show()
+	inputd.run()
+	inputd.destroy()
+	return
+        
 
     def save_cb(self, b):
 	print 'Saving'
