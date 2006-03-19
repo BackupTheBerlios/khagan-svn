@@ -161,8 +161,10 @@ class Khagan:
 		widget_node = doc.createElement('vsplit')
 		parent_node.appendChild(widget_node)
 	    elif(type(child) == gtk.VBox):
-		widget_node = doc.createElement('hsplit')
-		parent_node.appendChild(widget_node)
+		#first vbox is actually from the window, so don't save it.
+		if type(child.get_parent()) != gtk.Window:		    
+		    widget_node = doc.createElement('hsplit')
+		    parent_node.appendChild(widget_node)
 	    
 	    if issubclass(type(child), gtk.Container):
 		for child2 in child.get_children():
