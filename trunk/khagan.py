@@ -270,7 +270,7 @@ class Khagan:
 		widget.sub_index = [0]
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)		
-	    elif type == 'PhatSliderButton':
+	    elif name == 'PhatSliderButton':
 		widget = phat.phat_slider_button_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1, 2)
 		widget.port = [0]
 		widget.osc_path = [0]
@@ -278,7 +278,7 @@ class Khagan:
 		widget.sub_index = [0]
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)	
-	    elif type == 'PhatPad':
+	    elif name == 'PhatPad':
 		widget = phat.Pad()	
 	    widget.connect('value-changed', self.osc_send_cb)
 	    widget.connect('button_press_event', self.edit_popup_cb)
