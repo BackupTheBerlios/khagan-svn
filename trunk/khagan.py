@@ -43,7 +43,7 @@ class Khagan:
         window.connect('destroy', lambda w: gtk.main_quit())
         window.set_size_request(300, 300)
         vbox = gtk.VBox()
-        window.add(vbox)
+	window.add(vbox)
 
         # Create a UIManager instance
         uimanager = gtk.UIManager()
@@ -104,6 +104,8 @@ class Khagan:
 
 	#create initial placeholder
 	frame = gtk.Frame()
+	# use that frame as base for ui
+	self.topframe = frame
 	frame.set_shadow_type(gtk.SHADOW_NONE)
 	button = gtk.Button()
 	button.set_relief(gtk.RELIEF_HALF)
@@ -137,8 +139,8 @@ class Khagan:
 	dialog = gtk.FileChooserDialog('Save as', self.window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
 	if dialog.run() == gtk.RESPONSE_OK:
 	    outfile = file(dialog.get_filename(), 'w')
-	    #xml.dom.ext.PrettyPrint(doc)
-	    xml.dom.ext.PrettyPrint(doc, outfile)
+	    xml.dom.ext.Print(doc, outfile)
+	    #xml.dom.ext.PrettyPrint(doc, outfile)
 	dialog.destroy()
 	return
 
@@ -214,9 +216,90 @@ class Khagan:
 	dialog = gtk.FileChooserDialog('Open', self.window, gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
 	if dialog.run() == gtk.RESPONSE_OK:
 	    doc = xml.dom.minidom.parse(dialog.get_filename())
-	    #xml.dom.ext.PrettyPrint(doc)
-	    
+	    parent_node = doc.getElementsByTagName('gui')
+	    # destroy current ui first
+	    for child in self.topframe.get_children():
+		child.destroy()
+
+	    parent = self.topframe
+	    for child in parent_node[0].childNodes:
+		self.open_rec(child, self.topframe)
+	    self.topframe.show_all()		
+	    for node in self.doc_order_iter(doc):
+	    	print node
+		
 	dialog.destroy()
+	return
+
+    def open_rec(self, node, parent_widget):
+	#if it's a grouping element
+	if node.nodeName == 'hsplit' or node.nodeName == 'vsplit':
+	    if node.nodeName == 'vsplit':
+		box = gtk.HBox(True)
+	    if node.nodeName == 'hsplit':
+		box = gtk.VBox(True)
+	    frame1 = gtk.Frame()
+	    frame1.set_shadow_type(gtk.SHADOW_NONE)
+	    box.pack_start(frame1)
+	    frame2 = gtk.Frame()
+	    frame2.set_shadow_type(gtk.SHADOW_NONE)
+	    box.pack_start(frame2)	
+	    #add the new box to the parent of placeholder
+	    parent_widget.add(box)
+	    #and removet he place holder
+	    parent_widget.show_all()
+	    #recure left
+	    self.open_rec(node.childNodes[0], frame1)
+	    #recure right
+	    self.open_rec(node.childNodes[1], frame2)
+	#otherwise it's a widget, but don't use an else because anything else could be in here.
+	if node.nodeName == 'widget':
+	    name = node.getElementsByTagName('name')[0].firstChild.data
+	    if name == 'GtkButton':
+		button1 = gtk.Button()
+		button1.connect('button_press_event', self.popup_cb)
+		button1.set_relief(gtk.RELIEF_HALF)
+		parent_widget.add(button1)
+		parent_widget.show_all()
+		return
+	    elif name == 'PhatHFanSlider':
+		widget = phat.phat_hfan_slider_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1)
+		widget.port = [0]
+		widget.osc_path = [0]
+		widget.split_path = [0]
+		widget.sub_index = [0]
+		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
+		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)		
+	    elif type == 'PhatSliderButton':
+		widget = phat.phat_slider_button_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1, 2)
+		widget.port = [0]
+		widget.osc_path = [0]
+		widget.split_path = [0]
+		widget.sub_index = [0]
+		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
+		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)	
+	    elif type == 'PhatPad':
+		widget = phat.Pad()	
+	    widget.connect('value-changed', self.osc_send_cb)
+	    widget.connect('button_press_event', self.edit_popup_cb)
+	    parent_widget.add(widget)
+	    parent_widget.show_all()	
+		
+		
+
+    def doc_order_iter(self, node):
+	"""
+	Iterates over each node in document order,
+	returning each in turn
+	"""
+	#Document order returns the current node,
+	#then each of its children in turn
+	yield node
+	for child in node.childNodes:
+	    #Create a generator for each child,
+	    #Over which to iterate
+	    for cn in self.doc_order_iter(child):
+		yield cn
 	return
 
     def popup_cb(self, widget, event):
