@@ -199,14 +199,14 @@ class Khagan:
 	node.appendChild(doc.createTextNode(child.get_name()))
 
 	for i in range(5):
-	    node = doc.createElement('osc_path'+str(i))
+	    node = doc.createElement('osc_path')
 	    widget_node.appendChild(node)
 	    node.appendChild(doc.createTextNode(child.osc_path[i]))
 
 	for i in range(5):
-	    node = doc.createElement('port'+str(i))
+	    node = doc.createElement('port')
 	    widget_node.appendChild(node)
-	    node.appendChild(doc.createTextNode(child.port[i]))
+	    node.appendChild(doc.createTextNode(str(child.port[i])))
 	return	
 
 
@@ -279,7 +279,22 @@ class Khagan:
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)	
 	    elif name == 'PhatPad':
-		widget = phat.Pad()	
+		widget = phat.Pad()
+		widget.port = range(5)
+		widget.osc_path = range(5)
+		widget.split_path = range(5)
+		widget.sub_index = range(5)
+		i = 0
+		for child in node.getElementsByTagName('osc_path'):
+		    self.split_path(widget, child.firstChild.data, i)
+		    print 'in osc path',  child.firstChild.data
+		    i+=1
+		i = 0
+		for child in node.getElementsByTagName('port'):
+		    widget.port[i] = int(child.firstChild.data)
+		    print 'in port',  child.firstChild.data
+		    i+=1		
+		
 	    widget.connect('value-changed', self.osc_send_cb)
 	    widget.connect('button_press_event', self.edit_popup_cb)
 	    parent_widget.add(widget)
@@ -365,10 +380,8 @@ class Khagan:
 	    		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
 	if hasattr(self.cur_widget, 'port'):
 	    for i in range(len(ports)):
-	    		gladexml.get_widget(entry[i]).set_text(str(self.cur_widget.port[i]))
+	    		gladexml.get_widget(ports[i]).set_text(str(self.cur_widget.port[i]))
 		
-	#gladexml.get_widget('custom3').set_value(self.cur_widget.get_adjustment().lower)
-	#gladexml.get_widget('custom2').set_value(self.cur_widget.get_adjustment().upper)
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
 	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_pad_cb, gladexml)
 	dialog.show_all()
@@ -454,7 +467,6 @@ class Khagan:
 	    widget = phat.phat_slider_button_new_with_range(1.0, 0.0, 200000.0, 0.1, 2)
 	elif type == 'add_pad':
 	    widget = phat.Pad()
-
 	
 	widget.connect('value-changed', self.osc_send_cb)
 	widget.connect('button_press_event', self.edit_popup_cb)
@@ -476,10 +488,9 @@ class Khagan:
     
     def glade_custom_handler (self, glade, func_name, name, str1, str2, int1, int2):
         if func_name == 'PhatSliderButton':
-	    temp = phat.phat_slider_button_new_with_range(1.0, 0.0, 2.0, 0.1, 2)
+	    temp = phat.phat_slider_button_new_with_range(100.0, 0.0, 20000.0, 0.1, 2)
 	    temp.show_all()
-	return temp
-	
+	return temp	
     
     def split(self, dir):
 	if(dir == 'v'):
