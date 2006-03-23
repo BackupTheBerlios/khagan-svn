@@ -411,22 +411,29 @@ class Khagan:
 	self.cur_widget.sub_index = range(5)
 	for i in range(len(entry)):
 	    self.split_path(self.cur_widget, gladexml.get_widget(entry[i]).get_text(), i)
-	    self.cur_widget.port[i] = int(gladexml.get_widget(port_list[i]).get_text())
+	    if(gladexml.get_widget(port_list[i]).get_text()):
+		self.cur_widget.port[i] = int(gladexml.get_widget(port_list[i]).get_text())
+	    else: 
+		self.cur_widget.port[i] = 0
 	#self.cur_widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
 	gladexml.get_widget('widget_pad_tablet').destroy()
 	return
 
     def split_path(self, widget, path, num):
-	widget.osc_path[num] = path
-	widget.split_path[num] = path.split(' ')
-	i = -1 # list index from zero
-	for item in widget.split_path[num]:
-	    i+=1
-	    if item.isdigit():
-		widget.split_path[num][i] = int(item)
-	    if item == '%':
-		widget.sub_index[num] = i
-	return
+	if len(path) > 0:
+	    widget.osc_path[num] = path
+	    widget.split_path[num] = path.split(' ')
+	    i = -1 # list index from zero
+	    for item in widget.split_path[num]:
+		i+=1
+		if item.isdigit():
+		    widget.split_path[num][i] = int(item)
+		if item == '%':
+		    widget.sub_index[num] = i
+	else:
+	    widget.osc_path[num] = ''
+	    widget.split_path[num] = ''	    
+	return    
 
     def osc_send_cb(self,widget):
 	#osc.Message("/filter/cutoff", [145.1232]).sendlocal(port)
@@ -436,11 +443,13 @@ class Khagan:
 		parms = [widget.get_x(), widget.get_y(), widget.get_xtilt(), widget.get_ytilt(), widget.get_pressure()]
 		print parms
 		for i in range(len(widget.split_path)):
-		    widget.split_path[i][widget.sub_index[i]] = parms[i]
-		    osc.Message(widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)]).sendlocal(widget.port[i])
-		    #print 'osc.Message(', widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)], ').sendlocal(', widget.port[i],')'
+		    if len(widget.split_path[i]) > 0:
+			widget.split_path[i][widget.sub_index[i]] = parms[i]
+			osc.Message(widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)]).sendlocal(widget.port[i])
+			#print 'osc.Message(', widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)], ').sendlocal(', widget.port[i],')'
 	    else:
-		osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path)]).sendlocal(widget.port[0])
+		if len(widget.split_path[0]) > 0:
+		    osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path)]).sendlocal(widget.port[0])
 	    #print 'osc.Message(', widget.split_path[0], widget.split_path[1:len(widget.split_path)], ').sendlocal(', widget.port, ')'
 	return
 	
