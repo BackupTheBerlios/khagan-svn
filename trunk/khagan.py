@@ -286,13 +286,19 @@ class Khagan:
 		widget.sub_index = range(5)
 		i = 0
 		for child in node.getElementsByTagName('osc_path'):
-		    self.split_path(widget, child.firstChild.data, i)
-		    print 'in osc path',  child.firstChild.data
+		    if(child.firstChild != None):
+			self.split_path(widget, child.firstChild.data, i)
+			print 'in osc path',  child.firstChild.data
+		    else:
+			self.split_path(widget, '', i)
 		    i+=1
 		i = 0
 		for child in node.getElementsByTagName('port'):
-		    widget.port[i] = int(child.firstChild.data)
-		    print 'in port',  child.firstChild.data
+		    if(child.firstChild != None):
+			widget.port[i] = int(child.firstChild.data)
+			print 'in port',  child.firstChild.data
+		    else:
+			widget.port[i] = 0
 		    i+=1		
 		
 	    widget.connect('value-changed', self.osc_send_cb)
