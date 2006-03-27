@@ -367,8 +367,8 @@ class Khagan:
 	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path[0])
 	if hasattr(self.cur_widget, 'port'):
 	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port[0]))
-	gladexml.get_widget('custom3').set_value(self.cur_widget.get_adjustment().lower)
-	gladexml.get_widget('custom2').set_value(self.cur_widget.get_adjustment().upper)
+	gladexml.get_widget('sbutton_min').set_value(self.cur_widget.get_adjustment().lower)
+	gladexml.get_widget('sbutton_max').set_value(self.cur_widget.get_adjustment().upper)
 	gladexml.get_widget('button1').connect("clicked", lambda w: dialog.destroy())
 	gladexml.get_widget('button2').connect("clicked", self.edit_okay_cb, gladexml)
 	dialog.show_all()
@@ -402,7 +402,7 @@ class Khagan:
 	self.cur_widget.sub_index = [0]
 	self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
 	self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
-	self.cur_widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
+	self.cur_widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
 	gladexml.get_widget('widget_continuous-1').destroy()
 	return
     
