@@ -361,23 +361,23 @@ class Khagan:
 
     def edit_continuous(self, b):
 	#open the corrent dialog from glade file
-	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous-1')
-	dialog = gladexml.get_widget('widget_continuous-1')
+	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous')
+	dialog = gladexml.get_widget('widget_continuous')
 	if hasattr(self.cur_widget, 'osc_path'):
 	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path[0])
 	if hasattr(self.cur_widget, 'port'):
 	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port[0]))
 	gladexml.get_widget('sbutton_min').set_value(self.cur_widget.get_adjustment().lower)
 	gladexml.get_widget('sbutton_max').set_value(self.cur_widget.get_adjustment().upper)
-	gladexml.get_widget('button1').connect("clicked", lambda w: dialog.destroy())
-	gladexml.get_widget('button2').connect("clicked", self.edit_okay_cb, gladexml)
+	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
+	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_cb, gladexml)
 	dialog.show_all()
 	return
 
     def edit_pad(self, b):
 	#open the corrent dialog from glade file
-	gladexml = gtk.glade.XML("khagan.glade", 'widget_pad_tablet')
-	dialog = gladexml.get_widget('widget_pad_tablet')
+	gladexml = gtk.glade.XML("khagan.glade", 'widget_pad')
+	dialog = gladexml.get_widget('widget_pad')
 	#entries in list
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
 	ports = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
@@ -403,7 +403,7 @@ class Khagan:
 	self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
 	self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
 	self.cur_widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
-	gladexml.get_widget('widget_continuous-1').destroy()
+	gladexml.get_widget('widget_continuous').destroy()
 	return
     
     def edit_okay_pad_cb(self, button, gladexml):
@@ -422,7 +422,7 @@ class Khagan:
 	    else: 
 		self.cur_widget.port[i] = 0
 	#self.cur_widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
-	gladexml.get_widget('widget_pad_tablet').destroy()
+	gladexml.get_widget('widget_pad').destroy()
 	return
 
     def split_path(self, widget, path, num):
