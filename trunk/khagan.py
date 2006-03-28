@@ -124,6 +124,7 @@ class Khagan:
     def inputd_cb(self, b):
 	inputd = gtk.InputDialog()
         inputd.connect("destroy", lambda w: inputd.destroy())
+	inputd.action_area.get_children()[1].connect('button_press_event', lambda w, x: inputd.destroy())
 	inputd.show()
 	inputd.run()
 	inputd.destroy()
