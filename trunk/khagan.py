@@ -381,18 +381,30 @@ class Khagan:
 	#entries in list
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
 	ports = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
+	mins = ['sbutton_min_h', 'sbutton_min_v', 'sbutton_min_ht', 'sbutton_min_vt', 'sbutton_min_p']
+	# this looks dodgy, got to be a better way.
+	min_vals = [self.cur_widget.get_x().lower, self.cur_widget.get_y().lower, self.cur_widget.get_xtilt().lower, self.cur_widget.get_ytilt().lower, self.cur_widget.get_pressure().lower]
+	maxs = ['sbutton_max_h', 'sbutton_max_v', 'sbutton_max_ht', 'sbutton_max_vt', 'sbutton_max_p']
+	max_vals = [self.cur_widget.get_x().upper, self.cur_widget.get_y().upper, self.cur_widget.get_xtilt().upper, self.cur_widget.get_ytilt().upper, self.cur_widget.get_pressure().upper]
+	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
+	radio_vals = [self.cur_widget.x_is_log(), self.cur_widget.y_is_log(), self.cur_widget.xtilt_is_log(), self.cur_widget.ytilt_is_log(), self.cur_widget.pressure_is_log()]
+	
 	if hasattr(self.cur_widget, 'osc_path'):
 	    for i in range(len(entry)):
-	    		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
+		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
 	if hasattr(self.cur_widget, 'port'):
 	    for i in range(len(ports)):
-	    		gladexml.get_widget(ports[i]).set_text(str(self.cur_widget.port[i]))
-		
+		gladexml.get_widget(ports[i]).set_text(str(self.cur_widget.port[i]))
+	for i in range(len(mins)):
+	    gladexml.get_widget(mins[i]).set_value(min_vals[i])
+	for i in range(len(maxs)):
+	    gladexml.get_widget(mins[i]).set_value(max_vals[i])
+	for i in range(len(radios)):
+	    gladexml.get_widget(radios[i]).set_active(radio_vals[i]) 
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
 	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_pad_cb, gladexml)
 	dialog.show_all()
 	return
-
 
     def edit_okay_cb(self, button, gladexml):
 	#if they clicked okay, change current values.
@@ -410,6 +422,12 @@ class Khagan:
 	#if they clicked okay, change current values.
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
 	port_list = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
+	mins = ['sbutton_min_h', 'sbutton_min_v', 'sbutton_min_ht', 'sbutton_min_vt', 'sbutton_min_p']
+	maxs = ['sbutton_max_h', 'sbutton_max_v', 'sbutton_max_ht', 'sbutton_max_vt', 'sbutton_max_p']
+	adjusts = [self.cur_widget.get_x(), self.cur_widget.get_y(), self.cur_widget.get_xtilt(), self.cur_widget.get_ytilt(), self.cur_widget.get_pressure()]
+	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
+	radio_setters = [self.cur_widget.set_x_log, self.cur_widget.set_y_log, self.cur_widget.set_xtilt_log, self.cur_widget.set_ytilt_log, self.cur_widget.set_pressure_log]
+
 	#init port, osc_path, split_path
 	self.cur_widget.port = range(5)
 	self.cur_widget.osc_path = range(5)
@@ -421,6 +439,12 @@ class Khagan:
 		self.cur_widget.port[i] = int(gladexml.get_widget(port_list[i]).get_text())
 	    else: 
 		self.cur_widget.port[i] = 0
+	for i in range(len(mins)):
+	    setattr(adjusts[i], 'lower', gladexml.get_widget(mins[i]).get_value())
+	    setattr(adjusts[i], 'upper', gladexml.get_widget(maxs[i]).get_value())
+	for i in range(len(radios)):
+	    apply(radio_setters[i], [gladexml.get_widget(radios[i]).get_active()])
+	    
 	#self.cur_widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
 	gladexml.get_widget('widget_pad').destroy()
 	return
@@ -446,7 +470,7 @@ class Khagan:
 	#sub in current widget value to sub location. Iterate over all paths for multid widgets
 	if hasattr(widget, 'split_path'):
 	    if(type(widget) == phat.Pad):
-		parms = [widget.get_x(), widget.get_y(), widget.get_xtilt(), widget.get_ytilt(), widget.get_pressure()]
+		parms = [widget.get_x().value, widget.get_y().value, widget.get_xtilt().value, widget.get_ytilt().value, widget.get_pressure().value]
 		print parms
 		for i in range(len(widget.split_path)):
 		    if len(widget.split_path[i]) > 0:
