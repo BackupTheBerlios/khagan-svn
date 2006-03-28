@@ -2147,7 +2147,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry_pot_ht">
+		<widget class="GtkEntry" id="entry_port_ht">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
