@@ -119,12 +119,33 @@ class Khagan:
 	frame.add(button)
         vbox.pack_start(frame)
 
+	#restore setting for xinput devices
+	self.restore_devices()
+
         window.show_all()
         return
 
     def quit_cb(self, b):
         print 'Quitting program'
         gtk.main_quit()
+
+    #restore setting for xinput devices
+    def restore_devices(self):
+	#check if file exists with try
+	try:
+	    infile = file('khdevs.conf', 'r')
+        except IOError:
+            return
+	for line in infile.readlines():
+	    elements = line.split(',')
+	    for device in gtk.gdk.devices_list():
+		if device.name == elements[0]:
+		    #print "device name is ", device.name
+		    #set the mode for the device after creating the enum for that mode, wacky stuff.
+		    device.set_mode(gtk.gdk.InputMode(int(elements[1])))
+	    infile.close()
+	return	
+	
 
     def inputd_cb(self, b):
 	inputd = gtk.InputDialog()
@@ -568,9 +589,16 @@ class Khagan:
 	parentframe.add(box)
 	#and removet he place holder
 	parentframe.show_all()
-
+    
+def save_devices():
+    outfile = file('khdevs.conf', 'w')
+    for device in gtk.gdk.devices_list():
+	#the src int conversion is required because the enum init func requires an int
+	outfile.write(device.name + ", " + str(int(device.mode)) + "\n")
+    outfile.close()
+    return	
 	
-
 if __name__ == '__main__':
     ba = Khagan()
     gtk.main()
+    save_devices()
