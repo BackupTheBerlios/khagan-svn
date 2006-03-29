@@ -6,6 +6,7 @@ import gtk
 import gtk.glade
 import phat
 import osc
+import os.path
 import xml.dom.minidom
 import xml.dom.ext
 
@@ -133,7 +134,7 @@ class Khagan:
     def restore_devices(self):
 	#check if file exists with try
 	try:
-	    infile = file('khdevs.conf', 'r')
+	    infile = file(os.path.expanduser('~/.khagan/khdevice.conf'), 'r')
         except IOError:
             return
 	for line in infile.readlines():
@@ -591,7 +592,9 @@ class Khagan:
 	parentframe.show_all()
     
 def save_devices():
-    outfile = file('khdevs.conf', 'w')
+    if os.path.exists(os.path.expanduser('~/.khagan')) == False:
+	os.mkdir(os.path.expanduser('~/.khagan'))
+    outfile = file(os.path.expanduser('~/.khagan/khdevice.conf'), 'w')
     for device in gtk.gdk.devices_list():
 	#the src int conversion is required because the enum init func requires an int
 	outfile.write(device.name + ", " + str(int(device.mode)) + "\n")
