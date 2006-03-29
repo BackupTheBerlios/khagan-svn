@@ -17,7 +17,6 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
 
   <child>
     <widget class="GtkVBox" id="vbox1">
@@ -551,7 +550,6 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
 
   <child>
     <widget class="GtkVBox" id="vbox5">
@@ -939,7 +937,6 @@
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
-  <property name="urgency_hint">False</property>
 
   <child>
     <widget class="GtkVBox" id="vbox_label_tabs">
@@ -3075,6 +3072,16 @@
       </child>
     </widget>
   </child>
+</widget>
+
+<widget class="GtkAboutDialog" id="about_dialog">
+  <property name="visible">True</property>
+  <property name="destroy_with_parent">True</property>
+  <property name="name" translatable="yes">khagan</property>
+  <property name="comments" translatable="yes">Khagan is a live user interface builder for controling parameters via OSC.</property>
+  <property name="website">http://khagan.berlios.de</property>
+  <property name="authors">Loki Davison
+Thorsten Wilms</property>
 </widget>
 
 </glade-interface>

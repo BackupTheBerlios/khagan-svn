@@ -2,7 +2,7 @@
 <!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
 
 <glade-project>
-  <name>oscgui</name>
-  <program_name>oscgui</program_name>
+  <name>khagan</name>
+  <program_name>khagan</program_name>
   <gnome_support>FALSE</gnome_support>
 </glade-project>

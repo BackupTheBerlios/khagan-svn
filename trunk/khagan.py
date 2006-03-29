@@ -19,6 +19,9 @@ class Khagan:
 	    <menuitem action="Configure input"/>
 	    <menuitem action="Quit"/>
 	</menu>
+	<menu action="Help">
+	    <menuitem action="About"/>
+	</menu>
     </menubar>
     <popup name="popup">
 	<menuitem name="Split vertical" action="vsplit"/>
@@ -66,7 +69,9 @@ class Khagan:
 				('File', None, '_File'),
 				('Save', gtk.STOCK_SAVE, None, None, 'Save current setup', self.save_cb),
 				('Configure input', gtk.STOCK_PREFERENCES, 'Configure input', None, 'Save current setup', self.inputd_cb),
-				('Open', gtk.STOCK_OPEN, None, None, 'Open setup', self.open_cb)])
+				('Open', gtk.STOCK_OPEN, None, None, 'Open setup', self.open_cb),
+				('Help', None, '_Help'),
+				('About', gtk.STOCK_ABOUT, None, None, 'About', self.about_cb)])
 								
 	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
 				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
@@ -129,7 +134,12 @@ class Khagan:
 	inputd.run()
 	inputd.destroy()
 	return
-        
+
+    def about_cb(self, b):
+	gladexml = gtk.glade.XML("khagan.glade", 'about_dialog')
+	dialog = gladexml.get_widget('about_dialog')
+	dialog.connect("destroy", lambda w: dialog.destroy())
+	return        
 
     def save_cb(self, b):
 	print 'Saving'
