@@ -431,7 +431,7 @@ class Khagan:
 	for i in range(len(mins)):
 	    gladexml.get_widget(mins[i]).set_value(min_vals[i])
 	for i in range(len(maxs)):
-	    gladexml.get_widget(mins[i]).set_value(max_vals[i])
+	    gladexml.get_widget(maxs[i]).set_value(max_vals[i])
 	for i in range(len(radios)):
 	    gladexml.get_widget(radios[i]).set_active(radio_vals[i]) 
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
@@ -474,6 +474,7 @@ class Khagan:
 		self.cur_widget.port[i] = 0
 	for i in range(len(mins)):
 	    setattr(adjusts[i], 'lower', gladexml.get_widget(mins[i]).get_value())
+	    print "lower", gladexml.get_widget(mins[i]).get_value(), "upper", gladexml.get_widget(maxs[i]).get_value()
 	    setattr(adjusts[i], 'upper', gladexml.get_widget(maxs[i]).get_value())
 	for i in range(len(radios)):
 	    apply(radio_setters[i], [gladexml.get_widget(radios[i]).get_active()])
