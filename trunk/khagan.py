@@ -368,7 +368,7 @@ class Khagan:
 	return
 
     def add_knob_cb(self, b):
-	print 'Quitting program'
+	self.add_widget('add_knob')
 	return
         #
     def add_slider_cb(self, b):
@@ -538,6 +538,8 @@ class Khagan:
 	    widget = phat.phat_hfan_slider_new_with_range(1.0, 0.0, 200000.0, 0.1)
 	elif type == 'add_slider':
 	    widget = phat.phat_slider_button_new_with_range(1.0, 0.0, 200000.0, 0.1, 2)
+	elif type == 'add_knob':
+	    widget = phat.phat_knob_new_with_range(1.0, 0.0, 200000.0, 0.1)
 	elif type == 'add_pad':
 	    widget = phat.Pad()
 	
