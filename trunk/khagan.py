@@ -79,10 +79,10 @@ class Khagan:
 				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
 				('join', None, '_Join cells', '<Control>j', None, self.join_cb),
 				('add', None, '_Add'),
-				('add_fan', None, 'Add _fanslider', '<Control>f', None, self.add_fan_cb),
-				('add_knob', None, 'Add _knob', '<Control>k', None, self.add_knob_cb),
-				('add_slider', None, 'Add _sliderbutton', '<Control>s', None, self.add_slider_cb),
-				('add_pad', None, 'Add _pad', '<Control>p', None, self.add_pad_cb)])
+				('add_fan', None, '_fanslider', '<Control>f', None, self.add_fan_cb),
+				('add_knob', None, '_knob', '<Control>k', None, self.add_knob_cb),
+				('add_slider', None, '_sliderbutton', '<Control>s', None, self.add_slider_cb),
+				('add_pad', None, '_pad', '<Control>p', None, self.add_pad_cb)])
 
 	editgroup.add_actions([('edit', gtk.STOCK_PROPERTIES, '_Edit Properties!', '<Control>e', None, self.edit_cb), 
 				('delete', gtk.STOCK_DELETE, None, None, None, self.delete_cb)])
