@@ -400,6 +400,8 @@ class Khagan:
 	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path[0])
 	if hasattr(self.cur_widget, 'port'):
 	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port[0]))
+	if hasattr(self.cur_widget, 'label'):
+	    gladexml.get_widget('entry_label').set_text(str(self.cur_widget.label.get_text()))
 	gladexml.get_widget('sbutton_min').set_value(self.cur_widget.get_adjustment().lower)
 	gladexml.get_widget('sbutton_max').set_value(self.cur_widget.get_adjustment().upper)
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
@@ -422,6 +424,8 @@ class Khagan:
 	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
 	radio_vals = [self.cur_widget.x_is_log(), self.cur_widget.y_is_log(), self.cur_widget.xtilt_is_log(), self.cur_widget.ytilt_is_log(), self.cur_widget.pressure_is_log()]
 	
+	if hasattr(self.cur_widget, 'label'):
+	    gladexml.get_widget('entry_label').set_text(str(self.cur_widget.label.get_text()))
 	if hasattr(self.cur_widget, 'osc_path'):
 	    for i in range(len(entry)):
 		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
@@ -447,6 +451,7 @@ class Khagan:
 	self.cur_widget.sub_index = [0]
 	self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
 	self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
+	self.cur_widget.label.set_text(gladexml.get_widget('entry_label').get_text())
 	self.cur_widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
 	gladexml.get_widget('widget_continuous').destroy()
 	return
@@ -460,6 +465,8 @@ class Khagan:
 	adjusts = [self.cur_widget.get_x(), self.cur_widget.get_y(), self.cur_widget.get_xtilt(), self.cur_widget.get_ytilt(), self.cur_widget.get_pressure()]
 	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
 	radio_setters = [self.cur_widget.set_x_log, self.cur_widget.set_y_log, self.cur_widget.set_xtilt_log, self.cur_widget.set_ytilt_log, self.cur_widget.set_pressure_log]
+
+	self.cur_widget.label.set_text(gladexml.get_widget('entry_label').get_text())
 
 	#init port, osc_path, split_path
 	self.cur_widget.port = range(5)
@@ -527,6 +534,7 @@ class Khagan:
 	button.connect('button_press_event', self.popup_cb)
 	button.set_relief(gtk.RELIEF_HALF)
 	parentframe.add(button)
+	parentframe.set_label(None)
 	parentframe.show_all()
 	return
 
@@ -535,16 +543,18 @@ class Khagan:
 	parentframe.remove(self.cur_widget)
 	
 	if type == 'add_fan':
-	    widget = phat.phat_hfan_slider_new_with_range(1.0, 0.0, 200000.0, 0.1)
+	    widget = phat.phat_hfan_slider_new_with_range(1.0, 20.0, 200000.0, 0.1)
 	elif type == 'add_slider':
-	    widget = phat.phat_slider_button_new_with_range(1.0, 0.0, 200000.0, 0.1, 2)
+	    widget = phat.phat_slider_button_new_with_range(1.0, 20.0, 200000.0, 0.1, 2)
 	elif type == 'add_knob':
-	    widget = phat.phat_knob_new_with_range(1.0, 0.0, 200000.0, 0.1)
+	    widget = phat.phat_knob_new_with_range(10.0, 20.0, 200000.0, 0.1)
 	elif type == 'add_pad':
 	    widget = phat.Pad()
 	
 	widget.connect('value-changed', self.osc_send_cb)
 	widget.connect('button_press_event', self.edit_popup_cb)
+	widget.label = gtk.Label("Default")
+	parentframe.set_label_widget(widget.label)
 	parentframe.add(widget)
 	parentframe.show_all()	
 	
