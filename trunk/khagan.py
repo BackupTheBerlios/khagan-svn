@@ -182,7 +182,7 @@ class Khagan:
     def save_rec(self, doc, parent_node, child):	
 	#if it's anything that has params just print it
 	widget_node = None
-	if(type(child) == phat.HFanSlider) or (type(child) == phat.SliderButton):
+	if(type(child) == phat.HFanSlider) or (type(child) == phat.SliderButton) or (type(child) == phat.Knob):
 	    self.save_widget(child, doc, parent_node)
 	elif type(child) == phat.Pad:
 	    self.save_widget_pad(child, doc, parent_node)
@@ -215,8 +215,8 @@ class Khagan:
     def save_widget(self, child, doc, parent_node):
 	widget_node = doc.createElement('widget')
 	parent_node.appendChild(widget_node)
-	names = ['name', 'value', 'min', 'max', 'osc_path', 'port']
-	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0])]
+	names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label']
+	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text()]
 	
 	for i in range(len(names)):
 	    node = doc.createElement(names[i])
@@ -232,6 +232,10 @@ class Khagan:
 	node = doc.createElement('name')
 	widget_node.appendChild(node)
 	node.appendChild(doc.createTextNode(child.get_name()))
+
+	node = doc.createElement('label')
+	widget_node.appendChild(node)
+	node.appendChild(doc.createTextNode(child.label.get_text()))
 
 	for i in range(5):
 	    node = doc.createElement('osc_path')
@@ -304,7 +308,8 @@ class Khagan:
 		widget.split_path = [0]
 		widget.sub_index = [0]
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
-		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)		
+		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)	
 	    elif name == 'PhatSliderButton':
 		widget = phat.phat_slider_button_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1, 2)
 		widget.port = [0]
@@ -312,13 +317,24 @@ class Khagan:
 		widget.split_path = [0]
 		widget.sub_index = [0]
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
-		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)	
+		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+	    elif name == 'PhatKnob':
+		widget = phat.phat_knob_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1)
+		widget.port = [0]
+		widget.osc_path = [0]
+		widget.split_path = [0]
+		widget.sub_index = [0]
+		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
+		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
 	    elif name == 'PhatPad':
 		widget = phat.Pad()
 		widget.port = range(5)
 		widget.osc_path = range(5)
 		widget.split_path = range(5)
 		widget.sub_index = range(5)
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)	
 		i = 0
 		for child in node.getElementsByTagName('osc_path'):
 		    if(child.firstChild != None):
