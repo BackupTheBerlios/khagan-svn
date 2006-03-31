@@ -66,7 +66,7 @@ class Khagan:
 
 
         # Create actions
-        topgroup.add_actions([('Quit', gtk.STOCK_QUIT, '_Quit me!', None, 'Quit the Program', self.quit_cb), 
+        topgroup.add_actions([('Quit', gtk.STOCK_QUIT, None, None, 'Quit the Program', self.quit_cb), 
 				('File', None, '_File'),
 				('Save', gtk.STOCK_SAVE, None, None, 'Save current setup', self.save_cb),
 				('Configure input', gtk.STOCK_PREFERENCES, 'Configure input', None, 'Save current setup', self.inputd_cb),
@@ -520,8 +520,9 @@ class Khagan:
 			#print 'osc.Message(', widget.split_path[i][0], widget.split_path[i][1:len(widget.split_path)], ').sendlocal(', widget.port[i],')'
 	    else:
 		if len(widget.split_path[0]) > 0:
-		    osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path)]).sendlocal(widget.port[0])
-	    #print 'osc.Message(', widget.split_path[0], widget.split_path[1:len(widget.split_path)], ').sendlocal(', widget.port, ')'
+		    widget.split_path[0][widget.sub_index[0]] = widget.get_value()
+		    osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path[0])]).sendlocal(widget.port[0])
+		    print 'osc.Message(', widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path[0])], ').sendlocal(', widget.port[0], ')'
 	return
 	
 
