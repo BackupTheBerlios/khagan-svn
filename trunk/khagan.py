@@ -27,6 +27,7 @@ class Khagan:
     <popup name="popup">
 	<menuitem name="Split vertical" action="vsplit"/>
 	<menuitem name="Split horizontal" action="hsplit"/>
+	<menuitem name="Join" action="join"/>
 	<menu name="Add widget" action="add">
 	    <menuitem name="Add fanslider" action="add_fan"/>
 	    <menuitem name="Add knob" action="add_knob"/>
@@ -76,6 +77,7 @@ class Khagan:
 								
 	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
 				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
+				('join', None, '_Join cells', '<Control>j', None, self.join_cb),
 				('add', None, '_Add'),
 				('add_fan', None, 'Add _fanslider', '<Control>f', None, self.add_fan_cb),
 				('add_knob', None, 'Add _knob', '<Control>k', None, self.add_knob_cb),
@@ -571,7 +573,18 @@ class Khagan:
 	self.split('h')
 	return
 
-    
+    def join_cb(self, b):
+	#delete elements and join previous split thing FIXME type checks in here
+	parentbox = self.cur_widget.get_parent().get_parent()
+	parentframe = parentbox.get_parent()
+	parentframe.remove(parentbox)
+	button1 = gtk.Button()
+	button1.connect('button_press_event', self.popup_cb)
+	button1.set_relief(gtk.RELIEF_HALF)
+	parentframe.add(button1)
+	parentframe.show_all()
+	return
+   
     def glade_custom_handler (self, glade, func_name, name, str1, str2, int1, int2):
         if func_name == 'PhatSliderButton':
 	    temp = phat.phat_slider_button_new_with_range(100.0, 0.0, 20000.0, 0.1, 2)
