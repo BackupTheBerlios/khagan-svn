@@ -215,8 +215,8 @@ class Khagan:
     def save_widget(self, child, doc, parent_node):
 	widget_node = doc.createElement('widget')
 	parent_node.appendChild(widget_node)
-	names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label']
-	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text()]
+	names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label', 'is_log']
+	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text(), str(child.is_log())]
 	
 	for i in range(len(names)):
 	    node = doc.createElement(names[i])
@@ -226,6 +226,10 @@ class Khagan:
     
 
     def save_widget_pad(self, child, doc, parent_node):
+	is_logs = [child.x_is_log(), child.y_is_log(), child.xtilt_is_log(), child.ytilt_is_log(), child.pressure_is_log()]
+	min_vals = [child.get_x().lower, child.get_y().lower, child.get_xtilt().lower, child.get_ytilt().lower, child.get_pressure().lower]
+	max_vals = [child.get_x().upper, child.get_y().upper, child.get_xtilt().upper, child.get_ytilt().upper, child.get_pressure().upper]
+
 	widget_node = doc.createElement('widget')
 	parent_node.appendChild(widget_node)
 
@@ -246,6 +250,21 @@ class Khagan:
 	    node = doc.createElement('port')
 	    widget_node.appendChild(node)
 	    node.appendChild(doc.createTextNode(str(child.port[i])))
+	
+	for i in range(len(is_logs)):
+	    node = doc.createElement('is_log')
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(str(is_logs[i])))
+
+	for i in range(len(min_vals)):
+	    node = doc.createElement('min')
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(str(min_vals[i])))
+	for i in range(len(min_vals)):
+	    node = doc.createElement('max')
+	    widget_node.appendChild(node)
+	    node.appendChild(doc.createTextNode(str(max_vals[i])))
+
 	return	
 
 
@@ -309,7 +328,8 @@ class Khagan:
 		widget.sub_index = [0]
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
-		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)	
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		widget.set_log(interpret_bool(node.getElementsByTagName('is_log')[0].firstChild.data))
 	    elif name == 'PhatSliderButton':
 		widget = phat.phat_slider_button_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1, 2)
 		widget.port = [0]
@@ -328,13 +348,18 @@ class Khagan:
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
 		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		widget.set_log(interpret_bool(node.getElementsByTagName('is_log')[0].firstChild.data))
 	    elif name == 'PhatPad':
 		widget = phat.Pad()
 		widget.port = range(5)
 		widget.osc_path = range(5)
 		widget.split_path = range(5)
 		widget.sub_index = range(5)
-		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)	
+		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		radio_setters = [widget.set_x_log, widget.set_y_log, widget.set_xtilt_log, widget.set_ytilt_log, widget.set_pressure_log]
+		adjusts = [widget.get_x(), widget.get_y(), widget.get_xtilt(), widget.get_ytilt(), widget.get_pressure()]
+
+		
 		i = 0
 		for child in node.getElementsByTagName('osc_path'):
 		    if(child.firstChild != None):
@@ -350,8 +375,23 @@ class Khagan:
 			print 'in port',  child.firstChild.data
 		    else:
 			widget.port[i] = 0
-		    i+=1		
-		
+		    i+=1
+		i = 0
+		for child in node.getElementsByTagName('is_log'):
+		    if(child.firstChild != None):
+			apply(radio_setters[i], [interpret_bool(child.firstChild.data)]) 
+		    i+=1
+		i = 0
+		for child in node.getElementsByTagName('min'):
+		    if(child.firstChild != None):
+			setattr(adjusts[i], 'lower', float(child.firstChild.data))
+		    i+=1
+		i = 0
+		for child in node.getElementsByTagName('max'):
+		    if(child.firstChild != None):
+			setattr(adjusts[i], 'upper', float(child.firstChild.data))
+		    i+=1
+			
 	    widget.connect('value-changed', self.osc_send_cb)
 	    widget.connect('button_press_event', self.edit_popup_cb)
 	    parent_widget.add(widget)
@@ -422,6 +462,7 @@ class Khagan:
 	    gladexml.get_widget('entry_label').set_text(str(self.cur_widget.label.get_text()))
 	gladexml.get_widget('sbutton_min').set_value(self.cur_widget.get_adjustment().lower)
 	gladexml.get_widget('sbutton_max').set_value(self.cur_widget.get_adjustment().upper)
+	gladexml.get_widget('radio_log').set_active(self.cur_widget.is_log())
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
 	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_cb, gladexml)
 	dialog.show_all()
@@ -467,9 +508,12 @@ class Khagan:
 	self.cur_widget.osc_path = [0]
 	self.cur_widget.split_path = [0]
 	self.cur_widget.sub_index = [0]
-	self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
-	self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
+	if len(gladexml.get_widget('entry_path').get_text()) > 1:
+	    self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
+	if len(gladexml.get_widget('entry_port').get_text()) > 0:
+	    self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
 	self.cur_widget.label.set_text(gladexml.get_widget('entry_label').get_text())
+	self.cur_widget.set_log(gladexml.get_widget('radio_log').get_active())
 	self.cur_widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
 	gladexml.get_widget('widget_continuous').destroy()
 	return
@@ -499,7 +543,7 @@ class Khagan:
 		self.cur_widget.port[i] = 0
 	for i in range(len(mins)):
 	    setattr(adjusts[i], 'lower', gladexml.get_widget(mins[i]).get_value())
-	    print "lower", gladexml.get_widget(mins[i]).get_value(), "upper", gladexml.get_widget(maxs[i]).get_value()
+	    #print "lower", gladexml.get_widget(mins[i]).get_value(), "upper", gladexml.get_widget(maxs[i]).get_value()
 	    setattr(adjusts[i], 'upper', gladexml.get_widget(maxs[i]).get_value())
 	for i in range(len(radios)):
 	    apply(radio_setters[i], [gladexml.get_widget(radios[i]).get_active()])
@@ -642,7 +686,12 @@ def save_devices():
 	#the src int conversion is required because the enum init func requires an int
 	outfile.write(device.name + ", " + str(int(device.mode)) + "\n")
     outfile.close()
-    return	
+    return
+
+def interpret_bool(s):
+    s = s.lower()
+    if s in ('t', 'true', 'y', 'yes'): return True
+    if s in ('f', 'false', 'n', 'no'): return False
 	
 if __name__ == '__main__':
     ba = Khagan()
