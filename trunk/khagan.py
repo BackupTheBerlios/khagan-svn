@@ -9,6 +9,7 @@ import osc
 import os.path
 import xml.dom.minidom
 import xml.dom.ext
+import khagan_globals as pglobals
 
 class Khagan:
     ui = '''
@@ -104,7 +105,7 @@ class Khagan:
 
 	#load glade file for dialogs
 	gtk.glade.set_custom_handler(self.glade_custom_handler)
-	#self.gladexml = gtk.glade.XML("khagan.glade")
+	#self.gladexml = gtk.glade.XML(pglobals.data_dir+"/khagan.glade")
 
 	#create initial placeholder
 	frame = gtk.Frame()
@@ -155,7 +156,7 @@ class Khagan:
 	return
 
     def about_cb(self, b):
-	gladexml = gtk.glade.XML("khagan.glade", 'about_dialog')
+	gladexml = gtk.glade.XML(pglobals.data_dir+"/khagan.glade", 'about_dialog')
 	dialog = gladexml.get_widget('about_dialog')
 	dialog.connect("destroy", lambda w: dialog.destroy())
 	return        
@@ -474,7 +475,7 @@ class Khagan:
 
     def edit_continuous(self, widget):
 	#open the corrent dialog from glade file
-	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous')
+	gladexml = gtk.glade.XML(pglobals.data_dir+"/khagan.glade", 'widget_continuous')
 	dialog = gladexml.get_widget('widget_continuous')
 	if hasattr(widget, 'osc_path'):
 	    if type(widget.osc_path[0]) == str or type(widget.osc_path[0]) == unicode: 
@@ -494,7 +495,7 @@ class Khagan:
 
     def edit_pad(self, widget):
 	#open the corrent dialog from glade file
-	gladexml = gtk.glade.XML("khagan.glade", 'widget_pad')
+	gladexml = gtk.glade.XML(pglobals.data_dir+"/khagan.glade", 'widget_pad')
 	dialog = gladexml.get_widget('widget_pad')
 	#entries in list
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
