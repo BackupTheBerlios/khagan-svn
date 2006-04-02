@@ -52,6 +52,7 @@ class Khagan:
 
         # Create a UIManager instance
         uimanager = gtk.UIManager()
+	self.uimanager = uimanager
 
         # Add the accelerator group to the toplevel window
         accelgroup = uimanager.get_accel_group()
@@ -60,10 +61,6 @@ class Khagan:
         # Create an ActionGroup
         topgroup = gtk.ActionGroup('topbar')
         self.topgroup = topgroup
-	popupgroup = gtk.ActionGroup('popup')
-        self.popupgroup = popupgroup
-	editgroup = gtk.ActionGroup('edit')
-        self.editgroup = editgroup
 
 
         # Create actions
@@ -74,24 +71,29 @@ class Khagan:
 				('Open', gtk.STOCK_OPEN, None, None, 'Open setup', self.open_cb),
 				('Help', None, '_Help'),
 				('About', gtk.STOCK_ABOUT, None, None, 'About', self.about_cb)])
-								
-	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
-				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
-				('join', None, '_Join cells', '<Control>j', None, self.join_cb),
-				('add', None, '_Add'),
-				('add_fan', None, '_fanslider', '<Control>f', None, self.add_fan_cb),
-				('add_knob', None, '_knob', '<Control>k', None, self.add_knob_cb),
-				('add_slider', None, '_sliderbutton', '<Control>s', None, self.add_slider_cb),
-				('add_pad', None, '_pad', '<Control>p', None, self.add_pad_cb)])
 
-	editgroup.add_actions([('edit', gtk.STOCK_PROPERTIES, '_Edit Properties!', '<Control>e', None, self.edit_cb), 
-				('delete', gtk.STOCK_DELETE, None, None, None, self.delete_cb)])
+	# these 2 are just here as place holders so it doesn't worry about missing actions on initing the topbar
+	popupgroup = gtk.ActionGroup('popup')
+	self.tempgroup1 = popupgroup
+       	popupgroup.add_actions([('vsplit', None, 'Split _vertical'),
+				('hsplit', None, 'Split _horizontal'),
+				('join', None, '_Join cells'),
+				('add', None, '_Add'),
+				('add_fan', None, '_fanslider'),
+				('add_knob', None, '_knob'),
+				('add_slider', None, '_sliderbutton'),
+				('add_pad', None, '_pad')])
+
+	editgroup = gtk.ActionGroup('edit')
+	editgroup.add_actions([('edit', gtk.STOCK_PROPERTIES, '_Edit Properties'), 
+				('delete', gtk.STOCK_DELETE, None)])	    
+	self.tempgroup2 = editgroup
+	uimanager.insert_action_group(popupgroup, 1)
+	uimanager.insert_action_group(editgroup, 1)						
 
        
         # Add the actiongroup to the uimanager
         uimanager.insert_action_group(topgroup, 0)
-	uimanager.insert_action_group(popupgroup, 1)
-	uimanager.insert_action_group(editgroup, 2)
 
         # Add a UI description
         uimanager.add_ui_from_string(self.ui)
@@ -99,12 +101,6 @@ class Khagan:
         # Create a MenuBar
         menubar = uimanager.get_widget('/TopBar')
         vbox.pack_start(menubar, False)
-
-	popup = uimanager.get_widget('/popup')
-	self.popup = popup #FIXME
-
-	edit_popup = uimanager.get_widget('/editPopup')
-	self.edit_popup = edit_popup #FIXME
 
 	#load glade file for dialogs
 	gtk.glade.set_custom_handler(self.glade_custom_handler)
@@ -118,7 +114,6 @@ class Khagan:
 	button = gtk.Button()
 	button.set_relief(gtk.RELIEF_HALF)
 	button.connect('button_press_event', self.popup_cb)
-	self.cur_widget = button
 	frame.add(button)
         vbox.pack_start(frame)
 
@@ -415,60 +410,84 @@ class Khagan:
 	return
 
     def popup_cb(self, widget, event):
-	self.cur_widget = widget
-	self.popup.popup(None, None, None, event.button, event.time)
+	self.uimanager.remove_action_group(self.tempgroup1)
+	popupgroup = gtk.ActionGroup('popup')
+       	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
+				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
+				('join', None, '_Join cells', '<Control>j', None, self.join_cb),
+				('add', None, '_Add'),
+				('add_fan', None, '_fanslider', '<Control>f', None, self.add_fan_cb),
+				('add_knob', None, '_knob', '<Control>k', None, self.add_knob_cb),
+				('add_slider', None, '_sliderbutton', '<Control>s', None, self.add_slider_cb),
+				('add_pad', None, '_pad', '<Control>p', None, self.add_pad_cb)], widget)
+
+	self.uimanager.insert_action_group(popupgroup, 1)
+	popup = self.uimanager.get_widget('/popup')
+	popup.popup(None, None, None, event.button, event.time)
+	#sub for removal next time though, otherwise the are inserted and never removed
+	self.tempgroup1 = popupgroup
+	#self.uimanager.remove_action_group(popupgroup)
 	return
 
     def edit_popup_cb(self, widget, event):
 	if event.button == 3:
-	    self.cur_widget = widget
-	    self.edit_popup.popup(None, None, None, event.button, event.time)
+	    self.uimanager.remove_action_group(self.tempgroup2)
+	    editgroup = gtk.ActionGroup('edit')
+	    editgroup.add_actions([('edit', gtk.STOCK_PROPERTIES, '_Edit Properties', '<Control>e', None, self.edit_cb), 
+				('delete', gtk.STOCK_DELETE, None, None, None, self.delete_cb)], widget)	    
+	    
+	    self.uimanager.insert_action_group(editgroup, 2)
+	    edit_popup = self.uimanager.get_widget('/editPopup')
+	    edit_popup.popup(None, None, None, event.button, event.time)
+	    #sub for removal next time though
+	    self.tempgroup2 = editgroup
 	return
 
-    def add_knob_cb(self, b):
-	self.add_widget('add_knob')
+    def add_knob_cb(self, b, widget):
+	self.add_widget('add_knob', widget)
 	return
         #
-    def add_slider_cb(self, b):
-	print 'adding sliderbutton'
-	self.add_widget('add_slider')
+    def add_slider_cb(self, b, widget):
+	#print 'adding sliderbutton'
+	self.add_widget('add_slider', widget)
 	return
         #
-    def add_fan_cb(self, b):
-	print 'adding fan slider'
-	self.add_widget('add_fan')
+    def add_fan_cb(self, b, widget):
+	#print 'adding fan slider'
+	self.add_widget('add_fan', widget)
 	return
         #
-    def add_pad_cb(self, b):
-	print 'adding pad slider'
-	self.add_widget('add_pad')
+    def add_pad_cb(self, b, widget):
+	#print 'adding pad slider'
+	self.add_widget('add_pad', widget)
 	return
 
-    def edit_cb(self, b):
-	if(type(self.cur_widget) == phat.Pad):
-	    self.edit_pad(b)
+    def edit_cb(self, b, widget):
+	if(type(widget) == phat.Pad):
+	    self.edit_pad(widget)
 	else:
-	    self.edit_continuous(b)
+	    self.edit_continuous(widget)
 
-    def edit_continuous(self, b):
+    def edit_continuous(self, widget):
 	#open the corrent dialog from glade file
 	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous')
 	dialog = gladexml.get_widget('widget_continuous')
-	if hasattr(self.cur_widget, 'osc_path'):
-	    gladexml.get_widget('entry_path').set_text(self.cur_widget.osc_path[0])
-	if hasattr(self.cur_widget, 'port'):
-	    gladexml.get_widget('entry_port').set_text(str(self.cur_widget.port[0]))
-	if hasattr(self.cur_widget, 'label'):
-	    gladexml.get_widget('entry_label').set_text(str(self.cur_widget.label.get_text()))
-	gladexml.get_widget('sbutton_min').set_value(self.cur_widget.get_adjustment().lower)
-	gladexml.get_widget('sbutton_max').set_value(self.cur_widget.get_adjustment().upper)
-	gladexml.get_widget('radio_log').set_active(self.cur_widget.is_log())
+	if hasattr(widget, 'osc_path'):
+	    if type(widget.osc_path[0]) == str: 
+		gladexml.get_widget('entry_path').set_text(widget.osc_path[0])
+	if hasattr(widget, 'port'):
+	    gladexml.get_widget('entry_port').set_text(str(widget.port[0]))
+	if hasattr(widget, 'label'):
+	    gladexml.get_widget('entry_label').set_text(str(widget.label.get_text()))
+	gladexml.get_widget('sbutton_min').set_value(widget.get_adjustment().lower)
+	gladexml.get_widget('sbutton_max').set_value(widget.get_adjustment().upper)
+	gladexml.get_widget('radio_log').set_active(widget.is_log())
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
-	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_cb, gladexml)
+	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_cb, gladexml, widget)
 	dialog.show_all()
 	return
 
-    def edit_pad(self, b):
+    def edit_pad(self, widget):
 	#open the corrent dialog from glade file
 	gladexml = gtk.glade.XML("khagan.glade", 'widget_pad')
 	dialog = gladexml.get_widget('widget_pad')
@@ -477,20 +496,20 @@ class Khagan:
 	ports = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
 	mins = ['sbutton_min_h', 'sbutton_min_v', 'sbutton_min_ht', 'sbutton_min_vt', 'sbutton_min_p']
 	# this looks dodgy, got to be a better way.
-	min_vals = [self.cur_widget.get_x().lower, self.cur_widget.get_y().lower, self.cur_widget.get_xtilt().lower, self.cur_widget.get_ytilt().lower, self.cur_widget.get_pressure().lower]
+	min_vals = [widget.get_x().lower, widget.get_y().lower, widget.get_xtilt().lower, widget.get_ytilt().lower, widget.get_pressure().lower]
 	maxs = ['sbutton_max_h', 'sbutton_max_v', 'sbutton_max_ht', 'sbutton_max_vt', 'sbutton_max_p']
-	max_vals = [self.cur_widget.get_x().upper, self.cur_widget.get_y().upper, self.cur_widget.get_xtilt().upper, self.cur_widget.get_ytilt().upper, self.cur_widget.get_pressure().upper]
+	max_vals = [widget.get_x().upper, widget.get_y().upper, widget.get_xtilt().upper, widget.get_ytilt().upper, widget.get_pressure().upper]
 	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
-	radio_vals = [self.cur_widget.x_is_log(), self.cur_widget.y_is_log(), self.cur_widget.xtilt_is_log(), self.cur_widget.ytilt_is_log(), self.cur_widget.pressure_is_log()]
+	radio_vals = [widget.x_is_log(), widget.y_is_log(), widget.xtilt_is_log(), widget.ytilt_is_log(), widget.pressure_is_log()]
 	
-	if hasattr(self.cur_widget, 'label'):
-	    gladexml.get_widget('entry_label').set_text(str(self.cur_widget.label.get_text()))
-	if hasattr(self.cur_widget, 'osc_path'):
+	if hasattr(widget, 'label'):
+	    gladexml.get_widget('entry_label').set_text(str(widget.label.get_text()))
+	if hasattr(widget, 'osc_path'):
 	    for i in range(len(entry)):
-		gladexml.get_widget(entry[i]).set_text(self.cur_widget.osc_path[i])
-	if hasattr(self.cur_widget, 'port'):
+		gladexml.get_widget(entry[i]).set_text(widget.osc_path[i])
+	if hasattr(widget, 'port'):
 	    for i in range(len(ports)):
-		gladexml.get_widget(ports[i]).set_text(str(self.cur_widget.port[i]))
+		gladexml.get_widget(ports[i]).set_text(str(widget.port[i]))
 	for i in range(len(mins)):
 	    gladexml.get_widget(mins[i]).set_value(min_vals[i])
 	for i in range(len(maxs)):
@@ -498,49 +517,49 @@ class Khagan:
 	for i in range(len(radios)):
 	    gladexml.get_widget(radios[i]).set_active(radio_vals[i]) 
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
-	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_pad_cb, gladexml)
+	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_pad_cb, gladexml, widget)
 	dialog.show_all()
 	return
 
-    def edit_okay_cb(self, button, gladexml):
+    def edit_okay_cb(self, button, gladexml, widget):
 	#if they clicked okay, change current values.
-	self.cur_widget.port = [0]
-	self.cur_widget.osc_path = [0]
-	self.cur_widget.split_path = [0]
-	self.cur_widget.sub_index = [0]
+	widget.port = [0]
+	widget.osc_path = [0]
+	widget.split_path = [0]
+	widget.sub_index = [0]
 	if len(gladexml.get_widget('entry_path').get_text()) > 1:
-	    self.split_path(self.cur_widget, gladexml.get_widget('entry_path').get_text(), 0)
+	    self.split_path(widget, gladexml.get_widget('entry_path').get_text(), 0)
 	if len(gladexml.get_widget('entry_port').get_text()) > 0:
-	    self.cur_widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
-	self.cur_widget.label.set_text(gladexml.get_widget('entry_label').get_text())
-	self.cur_widget.set_log(gladexml.get_widget('radio_log').get_active())
-	self.cur_widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
+	    widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
+	widget.label.set_text(gladexml.get_widget('entry_label').get_text())
+	widget.set_log(gladexml.get_widget('radio_log').get_active())
+	widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
 	gladexml.get_widget('widget_continuous').destroy()
 	return
     
-    def edit_okay_pad_cb(self, button, gladexml):
+    def edit_okay_pad_cb(self, button, gladexml, widget):
 	#if they clicked okay, change current values.
 	entry = ['entry_path_h', 'entry_path_v', 'entry_path_ht', 'entry_path_vt', 'entry_path_p']
 	port_list = ['entry_port_h', 'entry_port_v', 'entry_port_ht', 'entry_port_vt', 'entry_port_p']
 	mins = ['sbutton_min_h', 'sbutton_min_v', 'sbutton_min_ht', 'sbutton_min_vt', 'sbutton_min_p']
 	maxs = ['sbutton_max_h', 'sbutton_max_v', 'sbutton_max_ht', 'sbutton_max_vt', 'sbutton_max_p']
-	adjusts = [self.cur_widget.get_x(), self.cur_widget.get_y(), self.cur_widget.get_xtilt(), self.cur_widget.get_ytilt(), self.cur_widget.get_pressure()]
+	adjusts = [widget.get_x(), widget.get_y(), widget.get_xtilt(), widget.get_ytilt(), widget.get_pressure()]
 	radios = ['radio_log_h', 'radio_log_v', 'radio_log_ht', 'radio_log_vt', 'radio_log_p']
-	radio_setters = [self.cur_widget.set_x_log, self.cur_widget.set_y_log, self.cur_widget.set_xtilt_log, self.cur_widget.set_ytilt_log, self.cur_widget.set_pressure_log]
+	radio_setters = [widget.set_x_log, widget.set_y_log, widget.set_xtilt_log, widget.set_ytilt_log, widget.set_pressure_log]
 
-	self.cur_widget.label.set_text(gladexml.get_widget('entry_label').get_text())
+	widget.label.set_text(gladexml.get_widget('entry_label').get_text())
 
 	#init port, osc_path, split_path
-	self.cur_widget.port = range(5)
-	self.cur_widget.osc_path = range(5)
-	self.cur_widget.split_path = range(5)
-	self.cur_widget.sub_index = range(5)
+	widget.port = range(5)
+	widget.osc_path = range(5)
+	widget.split_path = range(5)
+	widget.sub_index = range(5)
 	for i in range(len(entry)):
-	    self.split_path(self.cur_widget, gladexml.get_widget(entry[i]).get_text(), i)
+	    self.split_path(widget, gladexml.get_widget(entry[i]).get_text(), i)
 	    if(gladexml.get_widget(port_list[i]).get_text()):
-		self.cur_widget.port[i] = int(gladexml.get_widget(port_list[i]).get_text())
+		widget.port[i] = int(gladexml.get_widget(port_list[i]).get_text())
 	    else: 
-		self.cur_widget.port[i] = 0
+		widget.port[i] = 0
 	for i in range(len(mins)):
 	    setattr(adjusts[i], 'lower', gladexml.get_widget(mins[i]).get_value())
 	    #print "lower", gladexml.get_widget(mins[i]).get_value(), "upper", gladexml.get_widget(maxs[i]).get_value()
@@ -548,7 +567,7 @@ class Khagan:
 	for i in range(len(radios)):
 	    apply(radio_setters[i], [gladexml.get_widget(radios[i]).get_active()])
 	    
-	#self.cur_widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
+	#widget.set_range(gladexml.get_widget('custom3').get_value(), gladexml.get_widget('custom2').get_value())
 	gladexml.get_widget('widget_pad').destroy()
 	return
 
@@ -588,10 +607,10 @@ class Khagan:
 	return
 	
 
-    def delete_cb(self, b):
+    def delete_cb(self, b, widget):
 	#remove current widget
-	parentframe = self.cur_widget.get_parent()
-	parentframe.remove(self.cur_widget)
+	parentframe = widget.get_parent()
+	parentframe.remove(widget)
 	#and add the placeholder
 	button = gtk.Button()
 	button.connect('button_press_event', self.popup_cb)
@@ -601,9 +620,9 @@ class Khagan:
 	parentframe.show_all()
 	return
 
-    def add_widget(self, type):
-	parentframe = self.cur_widget.get_parent()
-	parentframe.remove(self.cur_widget)
+    def add_widget(self, type, parent_widget):
+	parentframe = parent_widget.get_parent()
+	parentframe.remove(parent_widget)
 	
 	if type == 'add_fan':
 	    widget = phat.phat_hfan_slider_new_with_range(1.0, 20.0, 200000.0, 0.1)
@@ -623,19 +642,19 @@ class Khagan:
 	
 
     #split the current cell vertical by creating a hbox. Everything goes in a frame first
-    def vsplit_cb(self, b):
+    def vsplit_cb(self, b, widget):
 	#creat a new hbox where the widget was and add the 2 buttons to it. 
-	self.split('v')
+	self.split('v', widget)
         return
     
-    def hsplit_cb(self, b):
+    def hsplit_cb(self, b, widget):
 	#creat a new vbox where the widget was and add the 2 buttons to it. 
-	self.split('h')
+	self.split('h', widget)
 	return
 
-    def join_cb(self, b):
+    def join_cb(self, b, widget):
 	#delete elements and join previous split thing FIXME type checks in here
-	parentbox = self.cur_widget.get_parent().get_parent()
+	parentbox = widget.get_parent().get_parent()
 	parentframe = parentbox.get_parent()
 	parentframe.remove(parentbox)
 	button1 = gtk.Button()
@@ -651,7 +670,7 @@ class Khagan:
 	    temp.show_all()
 	return temp	
     
-    def split(self, dir):
+    def split(self, dir, widget):
 	if(dir == 'v'):
 	    box = gtk.HBox(True)
 	else:
@@ -672,8 +691,8 @@ class Khagan:
 	frame2.add(button2)
         box.pack_start(frame2)	
 	#add the new box to the parent of placeholder
-	parentframe = self.cur_widget.get_parent()
-	parentframe.remove(self.cur_widget)
+	parentframe = widget.get_parent()
+	parentframe.remove(widget)
 	parentframe.add(box)
 	#and removet he place holder
 	parentframe.show_all()
@@ -688,6 +707,7 @@ def save_devices():
     outfile.close()
     return
 
+#for parsing the xml, no built in str2bool
 def interpret_bool(s):
     s = s.lower()
     if s in ('t', 'true', 'y', 'yes'): return True
