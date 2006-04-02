@@ -210,8 +210,12 @@ class Khagan:
     def save_widget(self, child, doc, parent_node):
 	widget_node = doc.createElement('widget')
 	parent_node.appendChild(widget_node)
-	names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label', 'is_log']
-	values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text(), str(child.is_log())]
+	if (type(child) == phat.SliderButton):
+	    names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label']
+	    values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text()]	
+	else:
+	    names = ['name', 'value', 'min', 'max', 'osc_path', 'port', 'label', 'is_log']
+	    values = [child.get_name(), str(child.get_value()), str(child.get_adjustment().lower), str(child.get_adjustment().upper), child.osc_path[0], str(child.port[0]), child.label.get_text(), str(child.is_log())]
 	
 	for i in range(len(names)):
 	    node = doc.createElement(names[i])
@@ -481,7 +485,8 @@ class Khagan:
 	    gladexml.get_widget('entry_label').set_text(str(widget.label.get_text()))
 	gladexml.get_widget('sbutton_min').set_value(widget.get_adjustment().lower)
 	gladexml.get_widget('sbutton_max').set_value(widget.get_adjustment().upper)
-	gladexml.get_widget('radio_log').set_active(widget.is_log())
+	if(type(widget) != phat.SliderButton):
+	    gladexml.get_widget('radio_log').set_active(widget.is_log())
 	gladexml.get_widget('button_cancel').connect("clicked", lambda w: dialog.destroy())
 	gladexml.get_widget('button_ok').connect("clicked", self.edit_okay_cb, gladexml, widget)
 	dialog.show_all()
@@ -532,7 +537,8 @@ class Khagan:
 	if len(gladexml.get_widget('entry_port').get_text()) > 0:
 	    widget.port[0] = int(gladexml.get_widget('entry_port').get_text())
 	widget.label.set_text(gladexml.get_widget('entry_label').get_text())
-	widget.set_log(gladexml.get_widget('radio_log').get_active())
+	if(type(widget) != phat.SliderButton):
+	    widget.set_log(gladexml.get_widget('radio_log').get_active())
 	widget.set_range(gladexml.get_widget('sbutton_min').get_value(), gladexml.get_widget('sbutton_max').get_value())
 	gladexml.get_widget('widget_continuous').destroy()
 	return
