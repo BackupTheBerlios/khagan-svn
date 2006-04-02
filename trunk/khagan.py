@@ -473,7 +473,7 @@ class Khagan:
 	gladexml = gtk.glade.XML("khagan.glade", 'widget_continuous')
 	dialog = gladexml.get_widget('widget_continuous')
 	if hasattr(widget, 'osc_path'):
-	    if type(widget.osc_path[0]) == str: 
+	    if type(widget.osc_path[0]) == str or type(widget.osc_path[0]) == unicode: 
 		gladexml.get_widget('entry_path').set_text(widget.osc_path[0])
 	if hasattr(widget, 'port'):
 	    gladexml.get_widget('entry_port').set_text(str(widget.port[0]))
