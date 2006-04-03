@@ -125,7 +125,7 @@ class Khagan:
         return
 
     def quit_cb(self, b):
-        print 'Quitting program'
+        #print 'Quitting program'
         gtk.main_quit()
 
     #restore setting for xinput devices
@@ -162,7 +162,7 @@ class Khagan:
 	return        
 
     def save_cb(self, b):
-	print 'Saving'
+	#print 'Saving'
 	doc = xml.dom.minidom.Document()
 	parent_node = doc.appendChild(doc.createElement("gui"))
 	for child in self.window.get_children():
@@ -269,7 +269,7 @@ class Khagan:
 
 
     def open_cb(self, b):
-	print 'Opening'
+	#print 'Opening'
 	doc = xml.dom.minidom.Document()	
 	dialog = gtk.FileChooserDialog('Open', self.window, gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
 	if dialog.run() == gtk.RESPONSE_OK:
@@ -283,9 +283,8 @@ class Khagan:
 	    for child in parent_node[0].childNodes:
 		self.open_rec(child, self.topframe)
 	    self.topframe.show_all()		
-	    for node in self.doc_order_iter(doc):
-	    	print node
-		
+	    #for node in self.doc_order_iter(doc):
+		#print node
 	dialog.destroy()
 	return
 
@@ -329,7 +328,9 @@ class Khagan:
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
 		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		parent_widget.set_label_widget(widget.label)
 		widget.set_log(interpret_bool(node.getElementsByTagName('is_log')[0].firstChild.data))
+		widget.set_value(float(node.getElementsByTagName('value')[0].firstChild.data)) 
 	    elif name == 'PhatSliderButton':
 		widget = phat.phat_slider_button_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1, 2)
 		widget.port = [0]
@@ -339,6 +340,8 @@ class Khagan:
 		self.split_path(widget, node.getElementsByTagName('osc_path')[0].firstChild.data, 0)
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
 		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		parent_widget.set_label_widget(widget.label)
+		widget.set_value(float(node.getElementsByTagName('value')[0].firstChild.data))
 	    elif name == 'PhatKnob':
 		widget = phat.phat_knob_new_with_range(float(node.getElementsByTagName('value')[0].firstChild.data), float(node.getElementsByTagName('min')[0].firstChild.data), float(node.getElementsByTagName('max')[0].firstChild.data), 0.1)
 		widget.port = [0]
@@ -349,6 +352,8 @@ class Khagan:
 		widget.port[0] = int(node.getElementsByTagName('port')[0].firstChild.data)
 		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
 		widget.set_log(interpret_bool(node.getElementsByTagName('is_log')[0].firstChild.data))
+		parent_widget.set_label_widget(widget.label)
+		widget.set_value(float(node.getElementsByTagName('value')[0].firstChild.data)) 
 	    elif name == 'PhatPad':
 		widget = phat.Pad()
 		widget.port = range(5)
@@ -356,6 +361,7 @@ class Khagan:
 		widget.split_path = range(5)
 		widget.sub_index = range(5)
 		widget.label = gtk.Label(node.getElementsByTagName('label')[0].firstChild.data)
+		parent_widget.set_label_widget(widget.label)
 		radio_setters = [widget.set_x_log, widget.set_y_log, widget.set_xtilt_log, widget.set_ytilt_log, widget.set_pressure_log]
 		adjusts = [widget.get_x(), widget.get_y(), widget.get_xtilt(), widget.get_ytilt(), widget.get_pressure()]
 
@@ -364,7 +370,7 @@ class Khagan:
 		for child in node.getElementsByTagName('osc_path'):
 		    if(child.firstChild != None):
 			self.split_path(widget, child.firstChild.data, i)
-			print 'in osc path',  child.firstChild.data
+			#print 'in osc path',  child.firstChild.data
 		    else:
 			self.split_path(widget, '', i)
 		    i+=1
@@ -372,7 +378,7 @@ class Khagan:
 		for child in node.getElementsByTagName('port'):
 		    if(child.firstChild != None):
 			widget.port[i] = int(child.firstChild.data)
-			print 'in port',  child.firstChild.data
+			#print 'in port',  child.firstChild.data
 		    else:
 			widget.port[i] = 0
 		    i+=1
@@ -395,8 +401,8 @@ class Khagan:
 	    widget.connect('value-changed', self.osc_send_cb)
 	    widget.connect('button_press_event', self.edit_popup_cb)
 	    parent_widget.add(widget)
-	    parent_widget.show_all()	
-		
+	    parent_widget.show_all()	    
+			
 		
 
     def doc_order_iter(self, node):
@@ -600,7 +606,7 @@ class Khagan:
 	if hasattr(widget, 'split_path'):
 	    if(type(widget) == phat.Pad):
 		parms = [widget.get_x().value, widget.get_y().value, widget.get_xtilt().value, widget.get_ytilt().value, widget.get_pressure().value]
-		print parms
+		#print parms
 		for i in range(len(widget.split_path)):
 		    if len(widget.split_path[i]) > 0:
 			widget.split_path[i][widget.sub_index[i]] = parms[i]
@@ -610,7 +616,7 @@ class Khagan:
 		if len(widget.split_path[0]) > 0:
 		    widget.split_path[0][widget.sub_index[0]] = widget.get_value()
 		    osc.Message(widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path[0])]).sendlocal(widget.port[0])
-		    print 'osc.Message(', widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path[0])], ').sendlocal(', widget.port[0], ')'
+		    #print 'osc.Message(', widget.split_path[0][0], widget.split_path[0][1:len(widget.split_path[0])], ').sendlocal(', widget.port[0], ')'
 	return
 	
 
