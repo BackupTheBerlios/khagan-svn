@@ -1,1 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?><gui><widget><name>PhatPad</name><osc_path>/om/synth/set_port_value 1 /x %</osc_path><osc_path>/om/synth/set_port_value 1 /y %</osc_path><osc_path></osc_path><osc_path></osc_path><osc_path>/om/synth/set_port_value 1 /p %</osc_path><port>16180</port><port>16180</port><port>0</port><port>0</port><port>16180</port></widget></gui>

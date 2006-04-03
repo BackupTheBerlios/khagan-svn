@@ -1,0 +1,485 @@
+<?xml version="1.0"?>
+<patch>
+  <name>twins_2</name>
+  <polyphony>1</polyphony>
+  <filename>/home/third/audio/khagan_drumloops/root.om</filename>
+  <node>
+    <name>Clip</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Clip</plugin-label>
+    <library-name>caps.so</library-name>
+    <module-x>1875.000000</module-x>
+    <module-y>1035.000000</module-y>
+  </node>
+  <node>
+    <name>Clip_2</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>Clip</plugin-label>
+    <library-name>caps.so</library-name>
+    <module-x>1889.000000</module-x>
+    <module-y>1198.000000</module-y>
+  </node>
+  <node>
+    <name>G2reverb</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>G2reverb</plugin-label>
+    <library-name>g2reverb.so</library-name>
+    <module-x>2278.000000</module-x>
+    <module-y>1059.000000</module-y>
+  </node>
+  <node>
+    <name>bandpass_a_iir</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>bandpass_a_iir</plugin-label>
+    <library-name>bandpass_a_iir_1893.so</library-name>
+    <module-x>1731.000000</module-x>
+    <module-y>1032.000000</module-y>
+    <port>
+      <name>Center Frequency (Hz)</name>
+      <user-min>4.800000</user-min>
+      <user-max>21599.998047</user-max>
+    </port>
+  </node>
+  <node>
+    <name>bandpass_a_iir_2</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>bandpass_a_iir</plugin-label>
+    <library-name>bandpass_a_iir_1893.so</library-name>
+    <module-x>1732.000000</module-x>
+    <module-y>1215.000000</module-y>
+  </node>
+  <node>
+    <name>bandwidth</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1626.000000</module-x>
+    <module-y>984.000000</module-y>
+  </node>
+  <node>
+    <name>difference_icmc_oc</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>difference_icmc_oc</plugin-label>
+    <library-name>difference_2030.so</library-name>
+    <module-x>1467.000000</module-x>
+    <module-y>965.000000</module-y>
+    <port>
+      <name>Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+    <port>
+      <name>Input to Subtract</name>
+      <user-min>-1.000000</user-min>
+      <user-max>2.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>loop_a_l</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_input</plugin-label>
+    <module-x>1535.000000</module-x>
+    <module-y>1066.000000</module-y>
+  </node>
+  <node>
+    <name>loop_a_r</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_input</plugin-label>
+    <module-x>1542.000000</module-x>
+    <module-y>1128.000000</module-y>
+  </node>
+  <node>
+    <name>loop_b_l</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_input</plugin-label>
+    <module-x>1541.000000</module-x>
+    <module-y>1200.000000</module-y>
+  </node>
+  <node>
+    <name>loop_b_r</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_input</plugin-label>
+    <module-x>1541.000000</module-x>
+    <module-y>1237.000000</module-y>
+  </node>
+  <node>
+    <name>out_l</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>2386.000000</module-x>
+    <module-y>1086.000000</module-y>
+  </node>
+  <node>
+    <name>out_r</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>audio_output</plugin-label>
+    <module-x>2389.000000</module-x>
+    <module-y>1162.000000</module-y>
+  </node>
+  <node>
+    <name>p</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>2042.000000</module-x>
+    <module-y>929.000000</module-y>
+  </node>
+  <node>
+    <name>volume_2</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1955.000000</module-x>
+    <module-y>1027.000000</module-y>
+    <port>
+      <name>Second Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>volume_3</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>1967.000000</module-x>
+    <module-y>1206.000000</module-y>
+    <port>
+      <name>Second Input</name>
+      <user-min>0.000000</user-min>
+      <user-max>1.000000</user-max>
+    </port>
+  </node>
+  <node>
+    <name>volume_l</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>2145.000000</module-x>
+    <module-y>1082.000000</module-y>
+  </node>
+  <node>
+    <name>volume_r</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>product_iaic_oa</plugin-label>
+    <library-name>product_1668.so</library-name>
+    <module-x>2145.000000</module-x>
+    <module-y>1160.000000</module-y>
+  </node>
+  <node>
+    <name>x</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1431.000000</module-x>
+    <module-y>917.000000</module-y>
+  </node>
+  <node>
+    <name>xfade</name>
+    <polyphonic>false</polyphonic>
+    <type>LADSPA</type>
+    <plugin-label>xfade</plugin-label>
+    <library-name>xfade_1915.so</library-name>
+    <module-x>1621.000000</module-x>
+    <module-y>1072.000000</module-y>
+  </node>
+  <node>
+    <name>y</name>
+    <polyphonic>false</polyphonic>
+    <type>Internal</type>
+    <plugin-label>control_input</plugin-label>
+    <module-x>1683.000000</module-x>
+    <module-y>919.000000</module-y>
+  </node>
+  <connection>
+    <source-node>loop_a_l</source-node>
+    <source-port>in</source-port>
+    <destination-node>xfade</destination-node>
+    <destination-port>Input A left</destination-port>
+  </connection>
+  <connection>
+    <source-node>loop_a_r</source-node>
+    <source-port>in</source-port>
+    <destination-node>xfade</destination-node>
+    <destination-port>Input A right</destination-port>
+  </connection>
+  <connection>
+    <source-node>loop_b_l</source-node>
+    <source-port>in</source-port>
+    <destination-node>xfade</destination-node>
+    <destination-port>Input B left</destination-port>
+  </connection>
+  <connection>
+    <source-node>loop_b_r</source-node>
+    <source-port>in</source-port>
+    <destination-node>xfade</destination-node>
+    <destination-port>Input B right</destination-port>
+  </connection>
+  <connection>
+    <source-node>xfade</source-node>
+    <source-port>Output left</source-port>
+    <destination-node>volume_l</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>xfade</source-node>
+    <source-port>Output right</source-port>
+    <destination-node>volume_r</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>p</source-node>
+    <source-port>in</source-port>
+    <destination-node>volume_l</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>p</source-node>
+    <source-port>in</source-port>
+    <destination-node>volume_r</destination-node>
+    <destination-port>Second Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>difference_icmc_oc</source-node>
+    <source-port>Difference Output</source-port>
+    <destination-node>xfade</destination-node>
+    <destination-port>Crossfade</destination-port>
+  </connection>
+  <connection>
+    <source-node>Clip</source-node>
+    <source-port>out</source-port>
+    <destination-node>volume_2</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>Clip_2</source-node>
+    <source-port>out</source-port>
+    <destination-node>volume_3</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume_2</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>volume_l</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume_3</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>volume_r</destination-node>
+    <destination-port>First Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>xfade</source-node>
+    <source-port>Output left</source-port>
+    <destination-node>bandpass_a_iir</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>xfade</source-node>
+    <source-port>Output right</source-port>
+    <destination-node>bandpass_a_iir_2</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>bandpass_a_iir_2</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Clip_2</destination-node>
+    <destination-port>in</destination-port>
+  </connection>
+  <connection>
+    <source-node>bandpass_a_iir</source-node>
+    <source-port>Output</source-port>
+    <destination-node>Clip</destination-node>
+    <destination-port>in</destination-port>
+  </connection>
+  <connection>
+    <source-node>x</source-node>
+    <source-port>in</source-port>
+    <destination-node>difference_icmc_oc</destination-node>
+    <destination-port>Input</destination-port>
+  </connection>
+  <connection>
+    <source-node>bandwidth</source-node>
+    <source-port>in</source-port>
+    <destination-node>bandpass_a_iir</destination-node>
+    <destination-port>Bandwidth (Hz)</destination-port>
+  </connection>
+  <connection>
+    <source-node>bandwidth</source-node>
+    <source-port>in</source-port>
+    <destination-node>bandpass_a_iir_2</destination-node>
+    <destination-port>Bandwidth (Hz)</destination-port>
+  </connection>
+  <connection>
+    <source-node>y</source-node>
+    <source-port>in</source-port>
+    <destination-node>bandpass_a_iir</destination-node>
+    <destination-port>Center Frequency (Hz)</destination-port>
+  </connection>
+  <connection>
+    <source-node>y</source-node>
+    <source-port>in</source-port>
+    <destination-node>bandpass_a_iir_2</destination-node>
+    <destination-port>Center Frequency (Hz)</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume_r</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>G2reverb</destination-node>
+    <destination-port>In R</destination-port>
+  </connection>
+  <connection>
+    <source-node>volume_l</source-node>
+    <source-port>Product Output</source-port>
+    <destination-node>G2reverb</destination-node>
+    <destination-port>In L</destination-port>
+  </connection>
+  <connection>
+    <source-node>G2reverb</source-node>
+    <source-port>Out L</source-port>
+    <destination-node>out_l</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <connection>
+    <source-node>G2reverb</source-node>
+    <source-port>Out R</source-port>
+    <destination-node>out_r</destination-node>
+    <destination-port>out</destination-port>
+  </connection>
+  <preset>
+    <name>default</name>
+    <control>
+      <node-name>Clip</node-name>
+      <port-name>gain (dB)</port-name>
+      <value>54.000000</value>
+    </control>
+    <control>
+      <node-name>Clip_2</node-name>
+      <port-name>gain (dB)</port-name>
+      <value>54.000000</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Room size</port-name>
+      <value>77.220169</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Reverb time</port-name>
+      <value>1.685917</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Input BW</port-name>
+      <value>0.350145</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Damping</port-name>
+      <value>0.276146</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Dry sound</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Reflections</port-name>
+      <value>-11.696836</value>
+    </control>
+    <control>
+      <node-name>G2reverb</node-name>
+      <port-name>Reverb tail</port-name>
+      <value>-18.483831</value>
+    </control>
+    <control>
+      <node-name>bandpass_a_iir</node-name>
+      <port-name>Center Frequency (Hz)</port-name>
+      <value>39.313736</value>
+    </control>
+    <control>
+      <node-name>bandpass_a_iir</node-name>
+      <port-name>Bandwidth (Hz)</port-name>
+      <value>321.993744</value>
+    </control>
+    <control>
+      <node-name>bandpass_a_iir_2</node-name>
+      <port-name>Center Frequency (Hz)</port-name>
+      <value>39.313736</value>
+    </control>
+    <control>
+      <node-name>bandpass_a_iir_2</node-name>
+      <port-name>Bandwidth (Hz)</port-name>
+      <value>321.993744</value>
+    </control>
+    <control>
+      <node-name>difference_icmc_oc</node-name>
+      <port-name>Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>difference_icmc_oc</node-name>
+      <port-name>Input to Subtract</port-name>
+      <value>1.000000</value>
+    </control>
+    <control>
+      <node-name>volume_2</node-name>
+      <port-name>Second Input</port-name>
+      <value>0.200000</value>
+    </control>
+    <control>
+      <node-name>volume_3</node-name>
+      <port-name>Second Input</port-name>
+      <value>0.200000</value>
+    </control>
+    <control>
+      <node-name>volume_l</node-name>
+      <port-name>Second Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>volume_r</node-name>
+      <port-name>Second Input</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <node-name>xfade</node-name>
+      <port-name>Crossfade</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <port-name>p</port-name>
+      <value>0.000000</value>
+    </control>
+    <control>
+      <port-name>x</port-name>
+      <value>2.000000</value>
+    </control>
+    <control>
+      <port-name>y</port-name>
+      <value>6.705891</value>
+    </control>
+    <control>
+      <port-name>bandwidth</port-name>
+      <value>60.000000</value>
+    </control>
+  </preset>
+</patch>
