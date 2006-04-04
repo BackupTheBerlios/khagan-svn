@@ -1,4 +1,5 @@
-this is very alpha code. You need pyphat to be installed from svn. Look at the readme in pyphat for where it goes.
-the paths should look something like /om/synth/set_port_value 1 /909bass/Tune % 
+this is alpha code. You need pyphat.
+the paths should look something like /om/synth/set_port_value 1 /909bass/Tune %
 % is the sub token, i.e % is replaced by the value of the widget 
-for the pad currently all paths must be set. Double right click to get to edit on the pad... i'll fix it ;-)
+Tilt currently doesn't work. It's a bug in gtk i'm pretty sure. I'm looking into it. 
+See the website khagan.berlios.de for actual docs and useful info ;)

@@ -2,7 +2,7 @@ To install Khagan, just type:
 
   python setup.py install
 
-This will install in user. If you want
+This will install in /usr (probably). If you want
 to install somewhere else i.e /usr/local type
   python setup.py install --prefix DIRECTORY
 

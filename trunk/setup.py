@@ -17,7 +17,7 @@ class InstallLib(install_lib):
         fp.close()
 	return install_lib.install(self) + [filename]
 
-setup(name='Khagan',
+setup(name='khagan',
       version='0.1',
       description='Khagan is a live user interface builder for controling parameters via OSC',
       author='Loki Davison',
