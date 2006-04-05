@@ -18,7 +18,7 @@ class InstallLib(install_lib):
 	return install_lib.install(self) + [filename]
 
 setup(name='khagan',
-      version='0.1',
+      version='0.1.1',
       description='Khagan is a live user interface builder for controling parameters via OSC',
       author='Loki Davison',
       author_email='loki.davison@gmail.com',
