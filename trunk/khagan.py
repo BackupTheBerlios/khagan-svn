@@ -29,6 +29,7 @@ class Khagan:
 	<menuitem name="Split vertical" action="vsplit"/>
 	<menuitem name="Split horizontal" action="hsplit"/>
 	<menuitem name="Join" action="join"/>
+	<menuitem name="Import" action="import"/>
 	<menu name="Add widget" action="add">
 	    <menuitem name="Add fanslider" action="add_fan"/>
 	    <menuitem name="Add knob" action="add_knob"/>
@@ -44,8 +45,10 @@ class Khagan:
       
     def __init__(self):
         # Create the toplevel window
+	gtk.window_set_default_icon_from_file(pglobals.data_dir+"/pixmaps/khagan_icon_24px.png")
 	window = gtk.Window()
 	self.window = window
+	window.set_title("Khagan")
         window.connect('destroy', lambda w: gtk.main_quit())
         window.set_size_request(300, 300)
         vbox = gtk.VBox()
@@ -83,7 +86,9 @@ class Khagan:
 				('add_fan', None, '_fanslider'),
 				('add_knob', None, '_knob'),
 				('add_slider', None, '_sliderbutton'),
-				('add_pad', None, '_pad')])
+				('add_pad', None, '_pad'),
+				('import', None, '_import')
+				])
 
 	editgroup = gtk.ActionGroup('edit')
 	editgroup.add_actions([('edit', gtk.STOCK_PROPERTIES, '_Edit Properties'), 
@@ -279,7 +284,6 @@ class Khagan:
 	    for child in self.topframe.get_children():
 		child.destroy()
 
-	    parent = self.topframe
 	    for child in parent_node[0].childNodes:
 		self.open_rec(child, self.topframe)
 	    self.topframe.show_all()		
@@ -287,6 +291,24 @@ class Khagan:
 		#print node
 	dialog.destroy()
 	return
+
+    def import_cb(self, b, widget):
+	#print 'Importing'
+	doc = xml.dom.minidom.Document()	
+	dialog = gtk.FileChooserDialog('Import', self.window, gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+	if dialog.run() == gtk.RESPONSE_OK:
+	    parentframe = widget.get_parent()
+	    parentframe.remove(widget)
+	    doc = xml.dom.minidom.parse(dialog.get_filename())
+	    parent_node = doc.getElementsByTagName('gui')
+	    for child in parent_node[0].childNodes:
+		self.open_rec(child, parentframe)
+	    widget.show_all()		
+	    #for node in self.doc_order_iter(doc):
+		#print node
+	dialog.destroy()
+	return
+
 
     def open_rec(self, node, parent_widget):
 	#if it's a grouping element
@@ -426,6 +448,7 @@ class Khagan:
        	popupgroup.add_actions([('vsplit', None, 'Split _vertical', '<Control>v', None, self.vsplit_cb),
 				('hsplit', None, 'Split _horizontal', '<Control>h', None, self.hsplit_cb),
 				('join', None, '_Join cells', '<Control>j', None, self.join_cb),
+				('import', None, '_Import File', '<Control>i', None, self.import_cb),
 				('add', None, '_Add'),
 				('add_fan', None, '_fanslider', '<Control>f', None, self.add_fan_cb),
 				('add_knob', None, '_knob', '<Control>k', None, self.add_knob_cb),

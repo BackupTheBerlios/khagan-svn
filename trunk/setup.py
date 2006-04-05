@@ -25,6 +25,6 @@ setup(name='khagan',
       url='http://khagan.berlios.de',
       py_modules = ['osc'],
       scripts = ['khagan.py'],
-      data_files=[('share/khagan', ['khagan.glade']), ('share/khagan/examples', glob.glob('examples/*'))],
+      data_files=[('share/khagan', ['khagan.glade']), ('share/khagan/examples', glob.glob('examples/*')), ('share/khagan/pixmaps', glob.glob('pixmaps/*'))],
       cmdclass={'install_lib': InstallLib})
 
