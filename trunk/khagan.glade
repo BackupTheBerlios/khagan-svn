@@ -798,7 +798,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkEntry" id="entry1">
+	    <widget class="GtkEntry" id="entry_path">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="editable">True</property>
@@ -1277,7 +1277,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry2">
+		<widget class="GtkEntry" id="entry_path_h">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -1613,7 +1613,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry3">
+		<widget class="GtkEntry" id="entry_path_v">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -1634,7 +1634,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry7">
+		<widget class="GtkEntry" id="entry_port_v">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -1970,7 +1970,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry4">
+		<widget class="GtkEntry" id="entry_path_ht">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -1991,7 +1991,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry8">
+		<widget class="GtkEntry" id="entry_port_ht">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -2327,7 +2327,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry5">
+		<widget class="GtkEntry" id="entry_path_vt">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -2348,7 +2348,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry9">
+		<widget class="GtkEntry" id="entry_port_vt">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -2684,7 +2684,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry6">
+		<widget class="GtkEntry" id="entry_path_p">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
@@ -2705,7 +2705,7 @@
 	      </child>
 
 	      <child>
-		<widget class="GtkEntry" id="entry10">
+		<widget class="GtkEntry" id="entry_port_p">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">True</property>
