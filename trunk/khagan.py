@@ -708,24 +708,24 @@ class Khagan:
     
     def split(self, dir, widget):
 	if(dir == 'v'):
-	    box = gtk.HBox(True)
+	    box = gtk.HPaned()
 	else:
-	    box = gtk.VBox(True)
-	
+	    box = gtk.VPaned()
+    
 	frame1 = gtk.Frame()
 	frame1.set_shadow_type(gtk.SHADOW_NONE)
 	button1 = gtk.Button()
 	button1.connect('button_press_event', self.popup_cb)
 	button1.set_relief(gtk.RELIEF_HALF)
 	frame1.add(button1)
-        box.pack_start(frame1)
+        box.add1(frame1)
 	button2 = gtk.Button()
 	frame2 = gtk.Frame()
 	frame2.set_shadow_type(gtk.SHADOW_NONE)
 	button2.connect('button_press_event', self.popup_cb)
 	button2.set_relief(gtk.RELIEF_HALF)
 	frame2.add(button2)
-        box.pack_start(frame2)	
+        box.add2(frame2)	
 	#add the new box to the parent of placeholder
 	parentframe = widget.get_parent()
 	parentframe.remove(widget)
