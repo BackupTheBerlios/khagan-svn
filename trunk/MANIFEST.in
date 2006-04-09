@@ -1,2 +1,3 @@
 include AUTHORS INSTALL MANIFEST.in README khagan.glade
 recursive-include examples *.kh
+recursive-include pixmaps *.png
