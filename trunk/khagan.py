@@ -767,12 +767,12 @@ def interpret_bool(s):
     if s in ('f', 'false', 'n', 'no'): return False
 
 def usage():
-    print "Khagan: osc control. \n -h prints this help \n -f --file loads from specified file"
+    print "Khagan: osc control. \n -h prints this help \n -f --file loads from specified file \n -n --name sets the window name \n -i --icon sets the icon"
 	
 if __name__ == '__main__':
     ba = Khagan()
     try:
-	opts, args = getopt.getopt(sys.argv[1:], "hf:", ["help", "file="])
+	opts, args = getopt.getopt(sys.argv[1:], "hf:n:i:", ["help", "file=", "name=", "icon="])
     except getopt.GetoptError:
         # print help information and exit:
         usage()
@@ -783,5 +783,9 @@ if __name__ == '__main__':
             sys.exit()
         if o in ("-f", "--file"):
             ba.open_file(a)
+	if o in ("-n", "--name"):
+            ba.window.set_title(a)
+	if o in ("-i", "--icon"):
+            gtk.window_set_default_icon_from_file(a)
     gtk.main()
     save_devices()
