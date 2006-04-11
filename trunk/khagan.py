@@ -9,6 +9,7 @@ import osc
 import os.path
 import xml.dom.minidom
 import xml.dom.ext
+import getopt, sys
 import khagan_globals as pglobals
 
 class Khagan:
@@ -290,6 +291,22 @@ class Khagan:
 	    #for node in self.doc_order_iter(doc):
 		#print node
 	dialog.destroy()
+	return
+
+    def open_file(self, filename):
+	#print 'Opening'
+	doc = xml.dom.minidom.Document()	
+	doc = xml.dom.minidom.parse(filename)
+	parent_node = doc.getElementsByTagName('gui')
+	# destroy current ui first
+	for child in self.topframe.get_children():
+	    child.destroy()
+
+	for child in parent_node[0].childNodes:
+	    self.open_rec(child, self.topframe)
+	self.topframe.show_all()		
+	#for node in self.doc_order_iter(doc):
+	#print node
 	return
 
     def import_cb(self, b, widget):
@@ -708,9 +725,9 @@ class Khagan:
     
     def split(self, dir, widget):
 	if(dir == 'v'):
-	    box = gtk.HPaned()
+	    box = gtk.HBox()
 	else:
-	    box = gtk.VPaned()
+	    box = gtk.VBox()
     
 	frame1 = gtk.Frame()
 	frame1.set_shadow_type(gtk.SHADOW_NONE)
@@ -718,14 +735,14 @@ class Khagan:
 	button1.connect('button_press_event', self.popup_cb)
 	button1.set_relief(gtk.RELIEF_HALF)
 	frame1.add(button1)
-        box.add1(frame1)
+        box.pack_start(frame1)
 	button2 = gtk.Button()
 	frame2 = gtk.Frame()
 	frame2.set_shadow_type(gtk.SHADOW_NONE)
 	button2.connect('button_press_event', self.popup_cb)
 	button2.set_relief(gtk.RELIEF_HALF)
 	frame2.add(button2)
-        box.add2(frame2)	
+        box.pack_start(frame2)	
 	#add the new box to the parent of placeholder
 	parentframe = widget.get_parent()
 	parentframe.remove(widget)
@@ -748,8 +765,23 @@ def interpret_bool(s):
     s = s.lower()
     if s in ('t', 'true', 'y', 'yes'): return True
     if s in ('f', 'false', 'n', 'no'): return False
+
+def usage():
+    print "Khagan: osc control. \n -h prints this help \n -f --file loads from specified file"
 	
 if __name__ == '__main__':
     ba = Khagan()
+    try:
+	opts, args = getopt.getopt(sys.argv[1:], "hf:", ["help", "file="])
+    except getopt.GetoptError:
+        # print help information and exit:
+        usage()
+        sys.exit(2)
+    for o, a in opts:
+	if o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        if o in ("-f", "--file"):
+            ba.open_file(a)
     gtk.main()
     save_devices()
