@@ -767,7 +767,7 @@ def interpret_bool(s):
     if s in ('f', 'false', 'n', 'no'): return False
 
 def usage():
-    print "Khagan: osc control. \n -h prints this help \n -f --file loads from specified file \n -n --name sets the window name \n -i --icon sets the icon"
+    print "Khagan: osc control. \n -h prints this help \n -f --file loads from specified file \n -n --name=nameofwindow sets the window name \n -i --icon=filename.png sets the icon"
 	
 if __name__ == '__main__':
     ba = Khagan()
